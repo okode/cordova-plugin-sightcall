@@ -1,2 +1,4 @@
-# cordova-plugin-sightcall
-Cordova Plugin for SightCall
+Cordova Plugin SightCall
+========================
+
+Cordova Plugin for SightCall.

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" id="cordova-plugin-sightcall" version="0.0.1">
+    <name>SightCall</name>
+    <description>Cordova SightCall Plugin</description>
+    <license>MIT</license>
+    <keywords>cordova,sightcall</keywords>
+
+    <engines>
+	<engine name="cordova" version=">=7.0.0" />
+    </engines>
+
+    <js-module src="www/sightcall.js" name="sightcall">
+    	<clobbers target="window.SightCall" />
+    </js-module>
+
+    <!-- ios -->
+    <platform name="ios">
+        <config-file target="config.xml" parent="/*">
+            <feature name="SightCall">
+                <param name="ios-package" value="CDVSightCall" onload="true" />
+            </feature>
+        </config-file>
+
+        <header-file src="src/ios/CDVSightCall.h" />
+        <source-file src="src/ios/CDVSightCall.m" />
+    </platform>
+
+    <!-- android -->
+    <platform name="android">
+        <config-file target="config.xml" parent="/*">
+            <feature name="SightCall">
+                <param name="android-package" value="com.okode.cordova.sightcall.SightCall" onload="true" />
+            </feature>
+        </config-file>
+
+        <source-file src="src/android/SightCall.java" target-dir="src/com/okode/cordova/sightcall" />
+    </platform>
+
+</plugin>
