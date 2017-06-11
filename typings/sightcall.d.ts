@@ -1,6 +1,6 @@
 declare module SightCall {
     interface SightCallPlugin {
-        demo();
+        demo():any;
     }
 }
 
