@@ -11,7 +11,7 @@
     </engines>
 
     <js-module src="www/sightcall.js" name="sightcall">
-    	<clobbers target="window.SightCall" />
+    	<clobbers target="window.sightcall" />
     </js-module>
 
     <!-- ios -->
