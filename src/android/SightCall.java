@@ -10,7 +10,7 @@ public class SightCall extends CordovaPlugin {
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
         if ("demo".equals(action)) {
-            System.out.println("SightCall: demo");
+            System.out.println("SightCall: demo invoked");
             callbackContext.success();
             return true;
         }

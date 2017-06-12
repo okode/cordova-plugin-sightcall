@@ -4,7 +4,7 @@
 
 - (void)demo:(CDVInvokedUrlCommand*)command
 {
-    NSLog(@"SightCall: demo");
+    NSLog(@"SightCall: demo invoked");
 }
 
 @end
