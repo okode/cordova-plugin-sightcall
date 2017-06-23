@@ -1,0 +1,19 @@
+
+buildscript {
+  dependencies {
+    classpath 'com.google.gms:google-services:3.1.0'
+  }
+}
+
+
+repositories {
+    maven {
+        url 'https://s3.amazonaws.com/sightcall.maven.release'
+    }
+}
+
+dependencies {
+    compile 'com.sightcall.universal:universal-sdk:3.1.0'
+}
+
+apply plugin: 'com.google.gms.google-services'

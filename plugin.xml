@@ -7,7 +7,7 @@
     <keywords>cordova,sightcall</keywords>
 
     <engines>
-	<engine name="cordova" version=">=7.0.0" />
+    	<engine name="cordova" version=">=7.0.0" />
     </engines>
 
     <js-module src="www/sightcall.js" name="sightcall">
@@ -35,6 +35,7 @@
         </config-file>
 
         <source-file src="src/android/SightCall.java" target-dir="src/com/okode/cordova/sightcall" />
+        <framework src="src/android/build-extras.gradle" custom="true" type="gradleReference" />
     </platform>
 
 </plugin>

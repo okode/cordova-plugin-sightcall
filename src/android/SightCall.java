@@ -7,6 +7,9 @@ import org.json.JSONException;
 
 public class SightCall extends CordovaPlugin {
 
+    private static final String TAG = "SightCallPlugin";
+
+
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
         if ("demo".equals(action)) {
