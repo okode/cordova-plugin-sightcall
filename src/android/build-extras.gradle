@@ -3,6 +3,7 @@ buildscript {
     jcenter()
   }
   dependencies {
+    classpath 'com.android.tools.build:gradle:2.3.3'
     classpath 'com.google.gms:google-services:3.1.0'
   }
 }
@@ -10,12 +11,12 @@ buildscript {
 
 repositories {
     maven {
-        url 'https://s3.amazonaws.com/sightcall.maven.release'
+      url 'https://s3.amazonaws.com/sightcall.maven.release'
     }
 }
 
 dependencies {
-    compile 'com.sightcall.universal:universal-sdk:3.1.0'
+  compile 'com.sightcall.universal:universal-sdk:3.1.0'
 }
 
 // apply plugin: 'com.google.gms.google-services'
