@@ -4,7 +4,7 @@ var utilities = require("./utils");
 
 module.exports = {
 
-    addFabricBuildToolsGradle: function() {
+    addGServicesBuildToolsGradle: function() {
 
         var buildGradle = utilities.readBuildGradle();
 
@@ -27,7 +27,7 @@ module.exports = {
         utilities.writeBuildGradle(buildGradle);
     },
 
-    removeFabricBuildToolsFromGradle: function() {
+    removeGServicesBuildToolsFromGradle: function() {
 
         var buildGradle = utilities.readBuildGradle();
 
