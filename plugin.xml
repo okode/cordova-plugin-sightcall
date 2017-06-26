@@ -10,6 +10,9 @@
     	<engine name="cordova" version=">=7.0.0" />
     </engines>
 
+    <hook type="after_plugin_add" src="hooks/after_plugin_add.js" />
+    <hook type="before_plugin_rm" src="hooks/before_plugin_rm.js" />
+    
     <js-module src="www/sightcall.js" name="sightcall">
     	<clobbers target="window.sightcall" />
     </js-module>
