@@ -35,6 +35,12 @@
                 <param name="android-package" value="com.okode.cordova.sightcall.SightCall" onload="true" />
             </feature>
         </config-file>
+        <config-file parent="/resources" target="res/values/strings.xml">
+            <string name="google_app_id">@string/google_app_id</string>
+        </config-file>
+        <config-file parent="/resources" target="res/values/strings.xml">
+            <string name="google_api_key">@string/google_api_key</string>
+        </config-file>
         <source-file src="src/android/SightCall.java" target-dir="src/com/okode/cordova/sightcall" />
         <framework src="src/android/build-extras.gradle" custom="true" type="gradleReference" />
         <framework src="com.google.firebase:firebase-core:+" />
