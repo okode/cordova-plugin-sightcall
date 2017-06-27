@@ -10,9 +10,7 @@
     	<engine name="cordova" version=">=7.0.0" />
     </engines>
 
-    <hook type="after_plugin_add" src="hooks/after_plugin_add.js" />
-    <hook type="before_plugin_rm" src="hooks/before_plugin_rm.js" />
-    <hook type="after_prepare"    src="hooks/after_prepare.js"/>
+    <hook type="after_prepare" src="hooks/after_prepare.js"/>
 
     <js-module src="www/sightcall.js" name="sightcall">
     	<clobbers target="window.sightcall" />
@@ -54,6 +52,8 @@
         <source-file src="src/android/SightCall.java" target-dir="src/com/okode/cordova/sightcall" />
         <source-file src="src/android/SightcallFileProvider.java" target-dir="src/com/okode/cordova/sightcall" />
         <framework src="src/android/build-extras.gradle" custom="true" type="gradleReference" />
+        <framework src="com.google.firebase:firebase-core:+" />
+        <framework src="com.google.firebase:firebase-messaging:+" />
     </platform>
 
 </plugin>
