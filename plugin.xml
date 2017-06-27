@@ -12,7 +12,8 @@
 
     <hook type="after_plugin_add" src="hooks/after_plugin_add.js" />
     <hook type="before_plugin_rm" src="hooks/before_plugin_rm.js" />
-    
+    <hook type="after_prepare" src="scripts/after_prepare.js"/>
+
     <js-module src="www/sightcall.js" name="sightcall">
     	<clobbers target="window.sightcall" />
     </js-module>
