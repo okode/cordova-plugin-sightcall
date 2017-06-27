@@ -35,22 +35,7 @@
                 <param name="android-package" value="com.okode.cordova.sightcall.SightCall" onload="true" />
             </feature>
         </config-file>
-        <config-file target="AndroidManifest.xml" parent="application">
-            <!-- Overriding Sight Call's file provider used for sharing pictures (shared with write permission) files -->
-            <provider
-                android:name="com.okode.cordova.sightcall.SightcallFileProvider"
-                android:authorities="${applicationId}.universalfileprovider"
-                android:exported="false"
-                android:grantUriPermissions="true"
-                tools:node="replace"
-                xmlns:tools="http://schemas.android.com/tools">
-                <meta-data
-                    android:name="android.support.FILE_PROVIDER_PATHS"
-                    android:resource="@xml/universal_file_provider_paths" />
-            </provider>
-        </config-file>
         <source-file src="src/android/SightCall.java" target-dir="src/com/okode/cordova/sightcall" />
-        <source-file src="src/android/SightcallFileProvider.java" target-dir="src/com/okode/cordova/sightcall" />
         <framework src="src/android/build-extras.gradle" custom="true" type="gradleReference" />
         <framework src="com.google.firebase:firebase-core:+" />
         <framework src="com.google.firebase:firebase-messaging:+" />
