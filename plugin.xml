@@ -10,7 +10,7 @@
     	<engine name="cordova" version=">=7.0.0" />
     </engines>
 
-    <preference name="UNIVERSAL_FEATURE_DEEPLINK_URI" default="guest.sightcall.com">
+    <preference name="UNIVERSAL_FEATURE_DEEPLINK_URI" default="guest.sightcall.com"/>
 
     <hook type="after_prepare" src="hooks/after_prepare.js"/>
 
