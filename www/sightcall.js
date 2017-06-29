@@ -45,17 +45,19 @@ SightCall.invite = function(phoneNumber) {
 };
 
 SightCall.isSightCallPush = function(payload) {
-    return new Promise(function(resolve, reject) {
-        exec(function() {
-            resolve();
-        }, function(error) {
-            reject(error);
-        }, "SightCall", "isSightCallPush", [payload]);
-    });
+    return payload != null && payload.extras != null && payload.extras.guest_ready != null;
 };
 
-SightCall.startCallFromPush = function(payload) {
-    exec(null, null, "SightCall", "startCallFromPush", [payload]);
+SightCall.startCall = function(payload) {
+    if (SightCall.isSightCallPush(payload)) {
+        var sightCallExtra = payload.extras.guest_ready;
+        try {
+            var callURL = JSON.parse(sightCallExtra).url;
+            exec(null, null, "SightCall", "startCall", [callURL]);
+        } catch (e) {
+            console.error('Error parsing sight call payload extra');
+        }
+    }
 };
 
 module.exports = SightCall;

@@ -6,8 +6,8 @@ declare module SightCall {
         registerAgent(token: string, pin: string): Promise<void>;
         fetchUseCases(): Promise<void>;
         invite(phoneNumber: string): Promise<void>;
-        isSightCallPush(payload: any): Promise<void>;
-        startCallFromPush(payload: any): void;
+        isSightCallPush(payload: any): boolean;
+        startCall(payload: any): void;
     }
 }
 

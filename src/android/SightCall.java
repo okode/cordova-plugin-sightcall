@@ -3,8 +3,6 @@ package com.okode.cordova.sightcall;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.sightcall.universal.Universal;
 import com.sightcall.universal.agent.UniversalAgent;
 import com.sightcall.universal.agent.model.GuestInvite;
@@ -22,25 +20,18 @@ import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CordovaWebView;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.lang.reflect.Type;
-import java.util.Map;
 
 import static com.okode.cordova.sightcall.Methods.DEMO;
 import static com.okode.cordova.sightcall.Methods.ENABLE_LOGGER;
 import static com.okode.cordova.sightcall.Methods.FETCH_USE_CASES;
 import static com.okode.cordova.sightcall.Methods.INVITE_GUEST;
-import static com.okode.cordova.sightcall.Methods.IS_SIGHT_CALL_PUSH;
 import static com.okode.cordova.sightcall.Methods.REGISTER_AGENT;
 import static com.okode.cordova.sightcall.Methods.SET_ENVIRONMENT;
-import static com.okode.cordova.sightcall.Methods.START_CALL_FROM_PUSH;
+import static com.okode.cordova.sightcall.Methods.START_CALL;
 
 public class SightCall extends CordovaPlugin {
 
     private static final String TAG = "SightCallPlugin";
-    private static final String SIGHT_CALL_PUSH_KEY = "guest_ready";
-    private static final String SIGHT_CALL_PUSH_URL_KEY = "url";
 
     @Override
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
@@ -94,11 +85,8 @@ public class SightCall extends CordovaPlugin {
         } else if (INVITE_GUEST.equals(action)) {
             this.invite(args.optString(0, null), callbackContext);
             return true;
-        } else if (IS_SIGHT_CALL_PUSH.equals(action)) {
-            this.isSightCallPush(args.optJSONObject(0), callbackContext);
-            return true;
-        } else if (START_CALL_FROM_PUSH.equals(action)) {
-            this.startCallFromPush(args.optJSONObject(0));
+        } else if (START_CALL.equals(action)) {
+            this.startCall(args.optString(0));
             return true;
         }
         callbackContext.error(action + " is not a supported action");
@@ -215,36 +203,8 @@ public class SightCall extends CordovaPlugin {
         });
     }
 
-    private boolean isSightCallPush(JSONObject payload) {
-        if (payload == null) {
-            Log.w(TAG, "Payload was NULL");
-            return false;
-        }
-        return payload.has(SIGHT_CALL_PUSH_KEY);
-    }
-
-    private boolean isSightCallPush(JSONObject payload, final CallbackContext callback) {
-        if (this.isSightCallPush(payload)) {
-            callback.success("Push payload belongs to a sight call notification");
-            return true;
-        }
-        callback.error("It is not a Sight Call push");
-        return false;
-    }
-
-    private void startCallFromPush(JSONObject payload) {
-        if (this.isSightCallPush(payload)) {
-            try {
-                String guestData = payload.getString(SIGHT_CALL_PUSH_KEY);
-                if (guestData != null) {
-                    Type type = new TypeToken<Map<String, String>>(){}.getType();
-                    Map<String, String> guestDataMap = new Gson().fromJson(guestData, type);
-                    Universal.start(guestDataMap.get(SIGHT_CALL_PUSH_URL_KEY));
-                }
-            } catch (JSONException e) {
-                Log.w(TAG, "Error getting sight call push. Error: " + e.getMessage());
-            }
-        }
+    private void startCall(String url) {
+        Universal.start(url);
     }
 }
 
@@ -255,6 +215,5 @@ final class Methods {
     final static String REGISTER_AGENT = "registerAgent";
     final static String FETCH_USE_CASES = "fetchUseCases";
     final static String INVITE_GUEST = "invite";
-    final static String IS_SIGHT_CALL_PUSH = "isSightCallPush";
-    final static String START_CALL_FROM_PUSH = "startCallFromPush";
+    final static String START_CALL = "startCall";
 }
