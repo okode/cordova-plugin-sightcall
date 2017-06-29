@@ -27,6 +27,7 @@ import static com.okode.cordova.sightcall.Methods.INVITE_GUEST;
 import static com.okode.cordova.sightcall.Methods.IS_SIGHT_CALL_PUSH;
 import static com.okode.cordova.sightcall.Methods.REGISTER_AGENT;
 import static com.okode.cordova.sightcall.Methods.SET_ENVIRONMENT;
+import static com.okode.cordova.sightcall.Methods.START_CALL_FROM_PUSH;
 
 public class SightCall extends CordovaPlugin {
 
@@ -72,7 +73,7 @@ public class SightCall extends CordovaPlugin {
         } else if (IS_SIGHT_CALL_PUSH.equals(action)) {
             this.isSightCallPush(args.optJSONObject(0), callbackContext);
             return true;
-        } else if (INVITE_GUEST.equals(action)) {
+        } else if (START_CALL_FROM_PUSH.equals(action)) {
             this.startCallFromPush(args.optJSONObject(0));
             return true;
         }
@@ -110,7 +111,7 @@ public class SightCall extends CordovaPlugin {
             return;
         }
         if (token == null || pin == null) {
-            callback.error("Token or pin param is NULL");
+            callback.error("Error, token or pin param is NULL");
             return;
         }
         Universal.agent().register(token, pin, new UniversalAgent.RegisterCallback() {
@@ -125,53 +126,64 @@ public class SightCall extends CordovaPlugin {
         });
     }
 
-    private void fetchUseCases(final CallbackContext callback) {
+    private void fetchUseCases(UniversalAgent.FetchUsecasesCallback callback) {
         if (!Universal.agent().isAvailable()) {
-            callback.error("Register the agent before");
+            Log.e(TAG, "Register the agent before");
+            callback.onFetchUsecasesFailure();
             return;
         }
         UniversalAgent agent = Universal.agent();
-        agent.fetchUsecases(new UniversalAgent.FetchUsecasesCallback() {
+        agent.fetchUsecases(callback);
+    }
+
+    private void fetchUseCases(final CallbackContext callback) {
+        this.fetchUseCases(new UniversalAgent.FetchUsecasesCallback() {
             @Override
             public void onFetchUsecasesSuccess() {
-                callback.success("Agent use cases retrieved");
+                callback.success("Use cases fetched");
             }
 
             @Override
             public void onFetchUsecasesFailure() {
-                callback.error("Error retrieving agent use cases");
+                callback.error("Error fetching use cases");
             }
         });
     }
 
-    private void invite(String phoneNumber, final CallbackContext callback) {
-        if (!Universal.agent().isAvailable()) {
-            callback.error("Register the agent before");
-            return;
-        }
-        if (phoneNumber == null) {
-            callback.error("Phone number cannot be NULL");
-            return;
-        }
-        UniversalAgent agent = Universal.agent();
-        GuestUsecase usecase = agent.getGuestUsecase();
-        GuestInvite invite = GuestInvite.sms(usecase, phoneNumber).build();
-        agent.inviteGuest(invite, new UniversalAgent.InviteGuestCallback() {
+    private void invite(final String phoneNumber, final CallbackContext callback) {
+        this.fetchUseCases(new UniversalAgent.FetchUsecasesCallback() {
             @Override
-            public void onInviteGuestSuccess() {
-                callback.success("Invitation was sent successfully");
+            public void onFetchUsecasesSuccess() {
+                if (phoneNumber == null) {
+                    callback.error("Error, phone number is NULL");
+                    return;
+                }
+                UniversalAgent agent = Universal.agent();
+                GuestUsecase usecase = agent.getGuestUsecase();
+                GuestInvite invite = GuestInvite.sms(usecase, phoneNumber).build();
+                agent.inviteGuest(invite, new UniversalAgent.InviteGuestCallback() {
+                    @Override
+                    public void onInviteGuestSuccess() {
+                        callback.success("Invitation was sent successfully");
+                    }
+
+                    @Override
+                    public void onInviteGuestFailure() {
+                        callback.error("Invitation couldn't be sent");
+                    }
+                });
             }
 
             @Override
-            public void onInviteGuestFailure() {
-                callback.error("Invitation couldn't be sent");
+            public void onFetchUsecasesFailure() {
+                callback.error("Error sending the invitation. Use cases couln't be fetched");
             }
         });
     }
 
     private boolean isSightCallPush(JSONObject payload) {
         if (payload == null) {
-            Log.w(TAG, "Payload was NULL");
+            Log.w(TAG, "Error, payload is NULL");
             return false;
         }
         return payload.has(SIGHT_CALL_PUSH_KEY);
