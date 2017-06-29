@@ -9,11 +9,17 @@ import com.sightcall.universal.Universal;
 import com.sightcall.universal.agent.UniversalAgent;
 import com.sightcall.universal.agent.model.GuestInvite;
 import com.sightcall.universal.agent.model.GuestUsecase;
+import com.sightcall.universal.event.UniversalCallReportEvent;
+import com.sightcall.universal.event.UniversalStatusEvent;
 import com.sightcall.universal.internal.api.model.SightCallCredentials;
 import com.sightcall.universal.util.Environment;
 
+import net.rtccloud.sdk.Event;
+
 import org.apache.cordova.CallbackContext;
+import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaPlugin;
+import org.apache.cordova.CordovaWebView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,6 +43,13 @@ public class SightCall extends CordovaPlugin {
     private static final String SIGHT_CALL_PUSH_URL_KEY = "url";
 
     @Override
+    public void initialize(CordovaInterface cordova, CordovaWebView webView) {
+        super.initialize(cordova, webView);
+        Universal.register(this);
+    }
+
+    //On first run, this lifecycle method is not fired. So, we invoke the register method in plugin initialization.
+    @Override
     public void onStart() {
         super.onStart();
         Universal.register(this);
@@ -46,6 +59,16 @@ public class SightCall extends CordovaPlugin {
     public void onStop() {
         super.onStop();
         Universal.unregister(this);
+    }
+
+    @Event
+    public void onStatusEvent(UniversalStatusEvent event) {
+        Log.i(TAG, event.toString());
+    }
+
+    @Event
+    public void onCallFinished(UniversalCallReportEvent event) {
+        Log.i(TAG, event.toString());
     }
 
     @Override
