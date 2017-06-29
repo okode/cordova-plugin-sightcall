@@ -34,8 +34,7 @@ public class SightCall extends CordovaPlugin {
     private static final String TAG = "SightCallPlugin";
 
     @Override
-    public void initialize(CordovaInterface cordova, CordovaWebView webView) {
-        super.initialize(cordova, webView);
+    protected void pluginInitialize() {
         Universal.register(this);
     }
 
