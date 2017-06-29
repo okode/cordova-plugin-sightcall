@@ -30,14 +30,15 @@ function directoryExists(path) {
   }
 }
 
-var stripRegex = "([^\@<]+?)";
 function stripStringNonDefaultValue(strings, stringKey) {
   if (strings == null) return;
+  var stripRegex = "([^\@<]+?)";
   return strings.replace(new RegExp('<string name="' + stringKey + '">' + stripRegex + '<\/string>', "i"), '');
 }
 
 function setValueToString(strings, stringKey, newValue) {
   if (strings == null) return;
+  var stripRegex = "([^<]+?)";
   return strings.replace(new RegExp('<string name="' + stringKey + '">' + stripRegex + '<\/string>', "i"), '<string name="' + stringKey + '">' + newValue + '</string>')
 }
 
@@ -85,6 +86,7 @@ if (directoryExists("platforms/android")) {
         // strip empty lines
         strings = strings.replace(new RegExp('(\r\n|\n|\r)[ \t]*(\r\n|\n|\r)', "gm"), '$1')
 
+        debugger;
         // replace the default values
         strings = setValueToString(strings, "google_app_id", json.client[0].client_info.mobilesdk_app_id);
         strings = setValueToString(strings, "google_api_key", json.client[0].api_key[0].current_key);
