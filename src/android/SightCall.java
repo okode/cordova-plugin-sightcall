@@ -1,5 +1,6 @@
 package com.okode.cordova.sightcall;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -93,10 +94,10 @@ public class SightCall extends CordovaPlugin {
     /** Allows you to change environment to PRE. If {@param environmentKey} is PPR, the PRE environment will be selected.
      *  Otherwise, the PRE environment will be selected
      *
-     * @param environmentKey
+     * @param environmentKey environmentKey
      */
     private void setEnvironment(String environmentKey) {
-        if(Environment.PPR.value().equalsIgnoreCase(environmentKey)) {
+        if (Environment.PPR.value().equalsIgnoreCase(environmentKey)) {
             Log.i(TAG, "PRE environment selected");
             Universal.agent().setDefaultEnvironment(Environment.PPR);
         } else {
@@ -116,7 +117,7 @@ public class SightCall extends CordovaPlugin {
         }
         Universal.agent().register(token, pin, new UniversalAgent.RegisterCallback() {
             @Override
-            public void onRegisterSuccess(SightCallCredentials sightCallCredentials) {
+            public void onRegisterSuccess(@NonNull SightCallCredentials sightCallCredentials) {
                 callback.success("Agent registration succeeded");
             }
             @Override
@@ -126,32 +127,42 @@ public class SightCall extends CordovaPlugin {
         });
     }
 
-    private void fetchUseCases(UniversalAgent.FetchUsecasesCallback callback) {
+    private void fetchUseCases(final FetchUseCasesCallback callback) {
         if (!Universal.agent().isAvailable()) {
             Log.e(TAG, "Register the agent before");
-            callback.onFetchUsecasesFailure();
+            callback.onFetchUsecasesFailure("Register the agent before");
             return;
         }
         UniversalAgent agent = Universal.agent();
-        agent.fetchUsecases(callback);
-    }
-
-    private void fetchUseCases(final CallbackContext callback) {
-        this.fetchUseCases(new UniversalAgent.FetchUsecasesCallback() {
+        agent.fetchUsecases(new UniversalAgent.FetchUsecasesCallback() {
             @Override
             public void onFetchUsecasesSuccess() {
-                callback.success("Use cases fetched");
+                callback.onFetchUsecasesSuccess();
             }
 
             @Override
             public void onFetchUsecasesFailure() {
-                callback.error("Error fetching use cases");
+                callback.onFetchUsecasesFailure("Error fetching use cases");
+            }
+        });
+    }
+
+    private void fetchUseCases(final CallbackContext callback) {
+        this.fetchUseCases(new FetchUseCasesCallback() {
+            @Override
+            public void onFetchUsecasesSuccess() {
+                callback.success("Use cases fetched successfully");
+            }
+
+            @Override
+            public void onFetchUsecasesFailure(String message) {
+                callback.error("Error fetching use cases. Reason: " + message);
             }
         });
     }
 
     private void invite(final String phoneNumber, final CallbackContext callback) {
-        this.fetchUseCases(new UniversalAgent.FetchUsecasesCallback() {
+        this.fetchUseCases(new FetchUseCasesCallback() {
             @Override
             public void onFetchUsecasesSuccess() {
                 if (phoneNumber == null) {
@@ -175,15 +186,15 @@ public class SightCall extends CordovaPlugin {
             }
 
             @Override
-            public void onFetchUsecasesFailure() {
-                callback.error("Error sending the invitation. Use cases couln't be fetched");
+            public void onFetchUsecasesFailure(String message) {
+                callback.error("Error sending the invitation. Unexpected error fetching use cases. Reason: " + message);
             }
         });
     }
 
     private boolean isSightCallPush(JSONObject payload) {
         if (payload == null) {
-            Log.w(TAG, "Error, payload is NULL");
+            Log.w(TAG, "Payload was NULL");
             return false;
         }
         return payload.has(SIGHT_CALL_PUSH_KEY);
@@ -215,12 +226,12 @@ public class SightCall extends CordovaPlugin {
 }
 
 final class Methods {
-    public final static String DEMO = "demo";
-    public final static String ENABLE_LOGGER = "enableLogger";
-    public final static String SET_ENVIRONMENT = "setEnvironment";
-    public final static String REGISTER_AGENT = "registerAgent";
-    public final static String FETCH_USE_CASES = "fetchUseCases";
-    public final static String INVITE_GUEST = "invite";
-    public final static String IS_SIGHT_CALL_PUSH = "isSightCallPush";
-    public final static String START_CALL_FROM_PUSH = "startCallFromPush";
+    final static String DEMO = "demo";
+    final static String ENABLE_LOGGER = "enableLogger";
+    final static String SET_ENVIRONMENT = "setEnvironment";
+    final static String REGISTER_AGENT = "registerAgent";
+    final static String FETCH_USE_CASES = "fetchUseCases";
+    final static String INVITE_GUEST = "invite";
+    final static String IS_SIGHT_CALL_PUSH = "isSightCallPush";
+    final static String START_CALL_FROM_PUSH = "startCallFromPush";
 }
