@@ -37,6 +37,16 @@
                 <param name="android-package" value="com.okode.cordova.sightcall.SightCall" onload="true" />
             </feature>
         </config-file>
+
+        <config-file target="AndroidManifest.xml" parent="/*">
+            <uses-permission android:name="android.permission.CAMERA" />
+        </config-file>
+        <config-file target="AndroidManifest.xml" parent="/*">
+            <uses-permission android:name="android.permission.RECORD_AUDIO" />
+        </config-file>
+        <config-file target="AndroidManifest.xml" parent="/*">
+            <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+        </config-file>
         <!--Google services-->
         <config-file parent="/resources" target="res/values/strings.xml">
             <string name="google_app_id">@string/google_app_id</string>
