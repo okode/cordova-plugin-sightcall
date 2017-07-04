@@ -14,6 +14,16 @@ SightCall.setEnvironment = function(environmentKey) {
     exec(null, null, "SightCall", "setEnvironment", [environmentKey]);
 };
 
+SightCall.isAgentAvailable = function() {
+    return new Promise(function(resolve, reject) {
+        exec(function() {
+            resolve();
+        }, function(error) {
+            reject(error);
+        }, "SightCall", "isAgentAvailable", []);
+    });
+};
+
 SightCall.registerAgent = function(token, pin) {
     return new Promise(function(resolve, reject) {
         exec(function() {

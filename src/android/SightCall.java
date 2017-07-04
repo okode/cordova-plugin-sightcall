@@ -25,6 +25,7 @@ import static com.okode.cordova.sightcall.Methods.DEMO;
 import static com.okode.cordova.sightcall.Methods.ENABLE_LOGGER;
 import static com.okode.cordova.sightcall.Methods.FETCH_USE_CASES;
 import static com.okode.cordova.sightcall.Methods.INVITE_GUEST;
+import static com.okode.cordova.sightcall.Methods.IS_AGENT_AVAILABLE;
 import static com.okode.cordova.sightcall.Methods.REGISTER_AGENT;
 import static com.okode.cordova.sightcall.Methods.SET_ENVIRONMENT;
 import static com.okode.cordova.sightcall.Methods.START_CALL;
@@ -75,6 +76,9 @@ public class SightCall extends CordovaPlugin {
             this.setEnvironment(args.optString(0, Environment.PROD.value()));
             callbackContext.success();
             return true;
+        } else if (IS_AGENT_AVAILABLE.equals(action)) {
+            this.isAgentAvailable(callbackContext);
+            return true;
         } else if (REGISTER_AGENT.equals(action)) {
             this.registerAgent(args.optString(0, null), args.optString(0, null), callbackContext);
             return true;
@@ -113,6 +117,14 @@ public class SightCall extends CordovaPlugin {
         } else {
             Log.i(TAG, "PRO environment selected");
             Universal.agent().setDefaultEnvironment(Environment.PROD);
+        }
+    }
+
+    private void isAgentAvailable(final CallbackContext callback) {
+        if (Universal.agent().isAvailable()) {
+            callback.success("Agent is available");
+        } else {
+            callback.error("Agent not available");
         }
     }
 
@@ -211,6 +223,7 @@ final class Methods {
     final static String DEMO = "demo";
     final static String ENABLE_LOGGER = "enableLogger";
     final static String SET_ENVIRONMENT = "setEnvironment";
+    final static String IS_AGENT_AVAILABLE = "isAgentAvailable";
     final static String REGISTER_AGENT = "registerAgent";
     final static String FETCH_USE_CASES = "fetchUseCases";
     final static String INVITE_GUEST = "invite";

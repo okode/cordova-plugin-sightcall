@@ -3,6 +3,7 @@ declare module SightCall {
         demo(): void;
         enableLogger(enabled: boolean): void;
         setEnvironment(environmentKey: string): void;
+        isAgentAvailable(): Promise<void>;
         registerAgent(token: string, pin: string): Promise<void>;
         fetchUseCases(): Promise<void>;
         invite(phoneNumber: string): Promise<void>;
