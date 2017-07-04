@@ -80,7 +80,7 @@ public class SightCall extends CordovaPlugin {
             this.isAgentAvailable(callbackContext);
             return true;
         } else if (REGISTER_AGENT.equals(action)) {
-            this.registerAgent(args.optString(0, null), args.optString(0, null), callbackContext);
+            this.registerAgent(args.optString(0, null), args.optString(1, null), callbackContext);
             return true;
         } else if (FETCH_USE_CASES.equals(action)) {
             this.fetchUseCases(callbackContext);
