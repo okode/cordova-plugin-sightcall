@@ -7,6 +7,14 @@ buildscript {
     }
 }
 
+android {
+    defaultConfig {
+        ndk {
+            abiFilters 'armeabi-v7a', 'x86'
+        }
+    }
+}
+
 repositories {
     maven {
       url 'https://s3.amazonaws.com/sightcall.maven.release'
