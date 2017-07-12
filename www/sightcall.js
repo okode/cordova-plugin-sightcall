@@ -54,6 +54,16 @@ SightCall.invite = function(phoneNumber) {
     });
 };
 
+SightCall.generateURL = function() {
+    return new Promise(function(resolve, reject) {
+        exec(function(url) {
+            resolve(url);
+        }, function(error) {
+            reject(error);
+        }, "SightCall", "generateCallURL", []);
+    });
+};
+
 SightCall.isSightCallPush = function(payload) {
     return payload != null && payload.extras != null && payload.extras.guest_ready != null;
 };
