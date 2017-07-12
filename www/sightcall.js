@@ -64,20 +64,12 @@ SightCall.generateURL = function() {
     });
 };
 
-SightCall.isSightCallPush = function(payload) {
+SightCall.isGuestReadyPush = function(payload) {
     return payload != null && payload.extras != null && payload.extras.guest_ready != null;
 };
 
-SightCall.startCall = function(payload) {
-    if (SightCall.isSightCallPush(payload)) {
-        var sightCallExtra = payload.extras.guest_ready;
-        try {
-            var callURL = JSON.parse(sightCallExtra).url;
-            exec(null, null, "SightCall", "startCall", [callURL]);
-        } catch (e) {
-            console.error('Error parsing sight call payload extra');
-        }
-    }
+SightCall.startCall = function(url) {
+    exec(null, null, "SightCall", "startCall", [url]);
 };
 
 module.exports = SightCall;

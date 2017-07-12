@@ -8,7 +8,7 @@ declare module SightCall {
         fetchUseCases(): Promise<void>;
         invite(phoneNumber: string): Promise<void>;
         generateURL(): Promise<string>;
-        isSightCallPush(payload: any): boolean;
+        isGuestReadyPush(payload: any): boolean;
         startCall(payload: any): void;
     }
 }
