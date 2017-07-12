@@ -24,6 +24,7 @@ import org.json.JSONException;
 import static com.okode.cordova.sightcall.Methods.DEMO;
 import static com.okode.cordova.sightcall.Methods.ENABLE_LOGGER;
 import static com.okode.cordova.sightcall.Methods.FETCH_USE_CASES;
+import static com.okode.cordova.sightcall.Methods.GENERATE_URL;
 import static com.okode.cordova.sightcall.Methods.INVITE_GUEST;
 import static com.okode.cordova.sightcall.Methods.IS_AGENT_AVAILABLE;
 import static com.okode.cordova.sightcall.Methods.REGISTER_AGENT;
@@ -91,6 +92,9 @@ public class SightCall extends CordovaPlugin {
         } else if (START_CALL.equals(action)) {
             this.startCall(args.optString(0));
             return true;
+        } else if (GENERATE_URL.equals(action)) {
+            this.generateURL(callbackContext);
+            return true;
         }
         callbackContext.error(action + " is not a supported action");
         return false;
@@ -113,10 +117,10 @@ public class SightCall extends CordovaPlugin {
     private void setEnvironment(String environmentKey) {
         if (Environment.PPR.value().equalsIgnoreCase(environmentKey)) {
             Log.i(TAG, "PRE environment selected");
-            Universal.agent().setDefaultEnvironment(Environment.PPR);
+            Universal.settings().defaultEnvironment().set(Environment.PPR);
         } else {
             Log.i(TAG, "PRO environment selected");
-            Universal.agent().setDefaultEnvironment(Environment.PROD);
+            Universal.settings().defaultEnvironment().set(Environment.PROD);
         }
     }
 
@@ -214,6 +218,34 @@ public class SightCall extends CordovaPlugin {
         });
     }
 
+    private void generateURL(final CallbackContext callback) {
+        this.fetchUseCases(new FetchUseCasesCallback() {
+            @Override
+            public void onFetchUsecasesSuccess() {
+                UniversalAgent agent = Universal.agent();
+                GuestUsecase usecase = agent.getGuestUsecase();
+                GuestInvite invite = GuestInvite.url(usecase).build();
+                agent.inviteGuest(invite, new UniversalAgent.InviteGuestUrlCallback() {
+                    private String url;
+                    @Override public void onInviteGuestUrl(String url) {
+                        this.url = url;
+                    }
+                    @Override public void onInviteGuestSuccess() {
+                        callback.success(this.url);
+                    }
+                    @Override public void onInviteGuestFailure() {
+                        callback.error("Error generating the call URL");
+                    }
+                });
+            }
+
+            @Override
+            public void onFetchUsecasesFailure(String message) {
+                callback.error("Error generating the call URL. Unexpected error fetching use cases. Reason: " + message);
+            }
+        });
+    }
+
     private void startCall(String url) {
         Universal.start(url);
     }
@@ -227,5 +259,6 @@ final class Methods {
     final static String REGISTER_AGENT = "registerAgent";
     final static String FETCH_USE_CASES = "fetchUseCases";
     final static String INVITE_GUEST = "invite";
+    final static String GENERATE_URL = "generateCallURL";
     final static String START_CALL = "startCall";
 }
