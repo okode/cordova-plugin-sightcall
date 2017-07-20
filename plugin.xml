@@ -29,8 +29,8 @@
         <header-file src="src/ios/CDVSightCall.h" />
         <source-file src="src/ios/CDVSightCall.m" />
 
-        <!-- Airship library -->
-        <source-file src="src/ios/Sightcall/LSUniversalSDK.framework" framework="true"/>
+        <!--SightCall framework-->
+        <framework src="src/ios/Sightcall/LSUniversalSDK.framework" custom="true" />
 
     </platform>
 
