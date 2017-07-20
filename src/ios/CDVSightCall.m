@@ -26,6 +26,18 @@ typedef void (^fetchUseCasesBlock)(BOOL success, NSString *msg,  NSArray<NSObjec
     NSLog(@"SightCall: demo function invoked");
 }
 
+- (void)isAgentAvailable:(CDVInvokedUrlCommand*)command
+{
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args, CordovaCompletionHandler completionHandler) {
+        if ([self.lsUniversal.agentHandler isAvailable]) {
+            completionHandler(CDVCommandStatus_OK, @"Agent is available");
+            return;
+        } else {
+            completionHandler(CDVCommandStatus_ERROR, @"Agent not available");
+        }
+    }];
+}
+
 - (void)registerAgent:(CDVInvokedUrlCommand*)command
 {
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, CordovaCompletionHandler completionHandler) {

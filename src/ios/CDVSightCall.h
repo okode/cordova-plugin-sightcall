@@ -10,6 +10,7 @@
 #endif
 
 - (void)demo:(CDVInvokedUrlCommand*)command;
+- (void)isAgentAvailable:(CDVInvokedUrlCommand*)command;
 - (void)registerAgent:(CDVInvokedUrlCommand*)command;
 - (void)fetchUseCases:(CDVInvokedUrlCommand*)command;
 - (void)invite:(CDVInvokedUrlCommand*)command;
