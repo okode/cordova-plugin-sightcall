@@ -30,7 +30,7 @@
         <source-file src="src/ios/CDVSightCall.m" />
 
         <!--SightCall framework-->
-        <framework src="src/ios/Sightcall/LSUniversalSDK.framework" custom="true" />
+        <framework src="src/ios/Sightcall/LSUniversalSDK.framework" custom="true" embed="true" />
 
     </platform>
 
