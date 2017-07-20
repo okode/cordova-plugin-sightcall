@@ -38,6 +38,13 @@ typedef void (^fetchUseCasesBlock)(BOOL success, NSString *msg,  NSArray<NSObjec
     }];
 }
 
+- (void)setNotificationToken:(CDVInvokedUrlCommand*)command
+{
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args, CordovaCompletionHandler completionHandler) {
+        [self.lsUniversal.agentHandler setNotificationToken:[args objectAtIndex:0]];
+    }];
+}
+
 - (void)registerAgent:(CDVInvokedUrlCommand*)command
 {
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, CordovaCompletionHandler completionHandler) {
@@ -45,8 +52,8 @@ typedef void (^fetchUseCasesBlock)(BOOL success, NSString *msg,  NSArray<NSObjec
             completionHandler(CDVCommandStatus_OK, @"Agent is already registered");
             return;
         }
-        NSString *token = [[args objectAtIndex:0] stringValue];
-        NSString *pin = [[args objectAtIndex:1] stringValue];
+        NSString *token = [args objectAtIndex:0];
+        NSString *pin = [args objectAtIndex:1];
         if (pin == NULL || token == NULL) {
             completionHandler(CDVCommandStatus_ERROR, @"Error, token or pin param is NULL");
         }
@@ -90,7 +97,7 @@ typedef void (^fetchUseCasesBlock)(BOOL success, NSString *msg,  NSArray<NSObjec
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, CordovaCompletionHandler completionHandler) {
         [self _fetchUseCases:^(BOOL success, NSString *msg, NSArray<NSObject<LSMAUsecase> *> *usecaselist) {
             if (success) {
-                NSString *phoneNumber = [[args objectAtIndex:0] stringValue];
+                NSString *phoneNumber = [args objectAtIndex:0];
                 if (phoneNumber == NULL) {
                     completionHandler(CDVCommandStatus_ERROR, @"Error, phone number is NULL");
                     return;
@@ -131,7 +138,7 @@ typedef void (^fetchUseCasesBlock)(BOOL success, NSString *msg,  NSArray<NSObjec
 - (void)startCall:(CDVInvokedUrlCommand*)command
 {
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, CordovaCompletionHandler completionHandler) {
-        NSString *url = [[args objectAtIndex:0] stringValue];
+        NSString *url = [args objectAtIndex:0];
         [self.lsUniversal startWithString:url];
     }];
 }
