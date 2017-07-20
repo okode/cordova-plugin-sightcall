@@ -1,14 +1,14 @@
 #import "CDVSightCall.h"
-
+#if !(TARGET_OS_SIMULATOR)
 typedef void (^CordovaCompletionHandler)(CDVCommandStatus, id);
 typedef void (^CordovaExecutionBlock)(NSArray *args, CordovaCompletionHandler completionHandler);
 
 /**
  *  The use cases fetch block that is fired in _fetchUseCases:
  *
- *  @param success		YES if the fetch did succeed
- *  @param msg	The error message if there was an error
- *  @param usecaselist			List of use cases if the fetch did succeed
+ *  @param success      YES if the fetch did succeed
+ *  @param msg  The error message if there was an error
+ *  @param usecaselist          List of use cases if the fetch did succeed
  */
 typedef void (^fetchUseCasesBlock)(BOOL success, NSString *msg,  NSArray<NSObject<LSMAUsecase> *> *usecaselist);
 
@@ -229,3 +229,4 @@ typedef void (^fetchUseCasesBlock)(BOOL success, NSString *msg,  NSArray<NSObjec
 
 
 @end
+#endif

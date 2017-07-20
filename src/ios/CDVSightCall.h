@@ -1,9 +1,13 @@
 #import <Cordova/CDVPlugin.h>
+#if !(TARGET_OS_SIMULATOR)
 #import <LSUniversalSDK/LSUniversalSDK.h>
+#endif
 
 @interface CDVSightCall : CDVPlugin
 
+#if !(TARGET_OS_SIMULATOR)
 @property (strong, nonatomic) LSUniversal* lsUniversal;
+#endif
 
 - (void)demo:(CDVInvokedUrlCommand*)command;
 - (void)registerAgent:(CDVInvokedUrlCommand*)command;
