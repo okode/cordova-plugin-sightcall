@@ -28,6 +28,10 @@
 
         <header-file src="src/ios/CDVSightCall.h" />
         <source-file src="src/ios/CDVSightCall.m" />
+
+        <!--SightCall framework-->
+        <framework src="src/ios/Sightcall/LSUniversalSDK.framework" custom="true" embed="true" />
+
     </platform>
 
     <!-- android -->
