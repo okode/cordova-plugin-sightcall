@@ -91,7 +91,13 @@
 
         <source-file src="src/android/SightCall.java" target-dir="src/com/okode/cordova/sightcall" />
         <source-file src="src/android/FetchUseCasesCallback.java" target-dir="src/com/okode/cordova/sightcall" />
-    
+        <source-file src="src/android/EventsManager.java" target-dir="src/com/okode/cordova/sightcall" />
+        <source-file src="src/android/EventListener.java" target-dir="src/com/okode/cordova/sightcall" />
+        <source-file src="src/android/Constants.java" target-dir="src/com/okode/cordova/sightcall" />
+        <source-file src="src/android/events/CallReport.java" target-dir="src/com/okode/cordova/sightcall" />
+        <source-file src="src/android/events/Event.java" target-dir="src/com/okode/cordova/sightcall" />
+        <source-file src="src/android/events/Status.java" target-dir="src/com/okode/cordova/sightcall" />
+
         <framework src="src/android/build-extras.gradle" custom="true" type="gradleReference" />
         <framework src="com.google.firebase:firebase-core:+" />
         <framework src="com.google.firebase:firebase-messaging:+" />
