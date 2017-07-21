@@ -18,8 +18,10 @@ import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CordovaWebView;
+import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import static com.okode.cordova.sightcall.Methods.DEMO;
 import static com.okode.cordova.sightcall.Methods.ENABLE_LOGGER;
@@ -28,6 +30,7 @@ import static com.okode.cordova.sightcall.Methods.GENERATE_URL;
 import static com.okode.cordova.sightcall.Methods.INVITE_GUEST;
 import static com.okode.cordova.sightcall.Methods.IS_AGENT_AVAILABLE;
 import static com.okode.cordova.sightcall.Methods.REGISTER_AGENT;
+import static com.okode.cordova.sightcall.Methods.REGISTER_LISTENER;
 import static com.okode.cordova.sightcall.Methods.SET_ENVIRONMENT;
 import static com.okode.cordova.sightcall.Methods.START_CALL;
 
@@ -53,14 +56,28 @@ public class SightCall extends CordovaPlugin {
         Universal.unregister(this);
     }
 
+    @Override
+    public void onReset() {
+        super.onReset();
+        EventsManager.instance().setListener(null);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventsManager.instance().setListener(null);
+    }
+
     @Event
     public void onStatusEvent(UniversalStatusEvent event) {
         Log.i(TAG, event.toString());
+        EventsManager.instance().sendStatusEvent(event);
     }
 
     @Event
     public void onCallFinished(UniversalCallReportEvent event) {
         Log.i(TAG, event.toString());
+        EventsManager.instance().sendCallReportEvent(event);
     }
 
     @Override
@@ -95,9 +112,37 @@ public class SightCall extends CordovaPlugin {
         } else if (GENERATE_URL.equals(action)) {
             this.generateURL(callbackContext);
             return true;
+        } else if (REGISTER_LISTENER.equals(action)) {
+            this.registerListener(callbackContext);
+            return true;
         }
         callbackContext.error(action + " is not a supported action");
         return false;
+    }
+
+    private void registerListener(final CallbackContext callbackContext) {
+        if (callbackContext == null) {
+            EventsManager.instance().setListener(null);
+            return;
+        }
+        EventsManager.instance().setListener(new EventListener() {
+            @Override
+            public void onEvent(com.okode.cordova.sightcall.events.Event event) {
+                JSONObject eventData = new JSONObject();
+
+                try {
+                    eventData.putOpt(com.okode.cordova.sightcall.events.Event.EVENT_TYPE, event.getEventName());
+                    eventData.putOpt(com.okode.cordova.sightcall.events.Event.EVENT_DATA, event.getEventData());
+                } catch (JSONException e) {
+                    Log.e(Constants.TAG, "Failed to create event: " + event);
+                    return;
+                }
+
+                PluginResult result = new PluginResult(PluginResult.Status.OK, eventData);
+                result.setKeepCallback(true);
+                callbackContext.sendPluginResult(result);
+            }
+        });
     }
 
     private void demo() {
@@ -261,4 +306,5 @@ final class Methods {
     final static String INVITE_GUEST = "invite";
     final static String GENERATE_URL = "generateCallURL";
     final static String START_CALL = "startCall";
+    final static String REGISTER_LISTENER = "registerListener";
 }

@@ -1,0 +1,48 @@
+package com.okode.cordova.sightcall.events;
+
+import android.support.annotation.NonNull;
+import android.util.Log;
+
+import com.okode.cordova.sightcall.Constants;
+import com.sightcall.universal.event.UniversalCallReportEvent;
+
+import net.rtccloud.sdk.Call;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+/**
+ * Created by rpanadero on 21/7/17.
+ */
+
+public class CallReport implements Event {
+
+    private static final String CALL_REPORT_EVENT_RECEIVED = "sightcall.callreportevent";
+    private static final String END_REASON = "endReason";
+    private static final String DURATION = "duration";
+    private static final String ACTIVE_DURATION = "activeDuration";
+
+    private UniversalCallReportEvent event;
+
+    public CallReport(UniversalCallReportEvent event) {
+        this.event = event;
+    }
+
+    @Override
+    public String getEventName() {
+        return CALL_REPORT_EVENT_RECEIVED;
+    }
+
+    @Override
+    public JSONObject getEventData() {
+        JSONObject data = new JSONObject();
+        try {
+            data.putOpt(DURATION, this.event.duration());
+            data.putOpt(ACTIVE_DURATION, this.event.activeDuration());
+            data.putOpt(END_REASON, this.event.result().toString());
+        } catch (JSONException e) {
+            Log.e(Constants.TAG, "Error constructing notification object. Message: " + e);
+        }
+        return data;
+    }
+}
