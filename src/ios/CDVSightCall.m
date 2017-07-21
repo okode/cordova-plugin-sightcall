@@ -69,7 +69,7 @@ typedef void (^fetchUseCasesBlock)(BOOL success, NSString *msg,  NSArray<NSObjec
 
 - (void)_fetchUseCases:(nonnull fetchUseCasesBlock) handler
 {
-    if ([self.lsUniversal.agentHandler isAvailable]) {
+    if (![self.lsUniversal.agentHandler isAvailable]) {
         handler(false, @"Register the agent before", NULL);
         return;
     }

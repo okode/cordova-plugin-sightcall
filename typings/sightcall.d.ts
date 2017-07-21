@@ -45,7 +45,7 @@ declare module SightCall {
          * @param payload Push payload
          */
         handleNotification(payload: any): void;
-        startCall(payload: any): void;
+        startCall(url: string): void;
     }
 }
 
