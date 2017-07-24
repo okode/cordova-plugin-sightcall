@@ -19,7 +19,7 @@ public class EventsManager {
     private static final EventsManager manager = new EventsManager();
     private EventListener listener = null;
 
-    private List<Event> pendingEvents = new ArrayList<Event>();
+    private final List<Event> pendingEvents = new ArrayList<Event>();
 
     private EventsManager() {}
 
@@ -39,6 +39,12 @@ public class EventsManager {
         synchronized (manager) {
             this.listener = listener;
             this.processPendingEvents();
+        }
+    }
+
+    public void addPendingEvent(Event event) {
+        if (event != null) {
+            this.pendingEvents.add(event);
         }
     }
 
