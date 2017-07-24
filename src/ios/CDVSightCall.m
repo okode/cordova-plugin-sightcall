@@ -12,6 +12,12 @@ typedef void (^CordovaExecutionBlock)(NSArray *args, CordovaCompletionHandler co
  */
 typedef void (^fetchUseCasesBlock)(BOOL success, NSString *msg,  NSArray<NSObject<LSMAUsecase> *> *usecaselist);
 
+// Events
+NSString *const EVENT_TYPE = @"eventType";
+NSString *const EVENT_DATA = @"eventData";
+NSString *const CALL_REPORT_EVENT_RECEIVED = @"sightcall.callreportevent";
+NSString *const STATUS_EVENT_RECEIVED = @"sightcall.statusevent";
+
 @implementation CDVSightCall
 
 #pragma mark - Plugin Initialization
@@ -19,6 +25,33 @@ typedef void (^fetchUseCasesBlock)(BOOL success, NSString *msg,  NSArray<NSObjec
 - (void)pluginInitialize
 {
     self.lsUniversal = [[LSUniversal alloc] init];
+}
+
+- (void)registerListener:(CDVInvokedUrlCommand *)command {
+    self.listenerCallbackID = command.callbackId;
+    self.lsUniversal.delegate = self;
+}
+
+-(void) connectionEvent:(lsConnectionStatus_t)status
+{
+    switch (status) {
+        case lsConnectionStatus_callActive:
+        {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self presentViewController:self.lsUniversal.callViewController animated:YES completion:nil];
+            });
+            break;
+        }
+        case lsConnectionStatus_disconnecting:
+            [self dismissViewControllerAnimated:TRUE completion:nil];
+            break;
+        default: break;
+    }
+}
+
+- (void)callReport:(lsCallReport_s)callEnd
+{
+    
 }
 
 - (void)demo:(CDVInvokedUrlCommand*)command
@@ -164,6 +197,26 @@ typedef void (^fetchUseCasesBlock)(BOOL success, NSString *msg,  NSArray<NSObjec
         }
     }];
 }
+
+- (BOOL)notifyListener:(NSString *)eventType data:(NSDictionary *)data {
+    if (!self.listenerCallbackID) {
+        UA_LTRACE(@"Listener callback unavailable.  event %@", eventType);
+        return NO;
+    }
+    
+    NSMutableDictionary *message = [NSMutableDictionary dictionary];
+    [message setValue:eventType forKey:EVENT_TYPE];
+    [message setValue:data forKey:EVENT_DATA];
+    
+    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:message];
+    [result setKeepCallbackAsBool:YES];
+    
+    [self.commandDelegate sendPluginResult:result callbackId:self.listenerCallbackID];
+    return YES;
+}
+
+#pragma mark Cordova plugin utilities
+
 
 /**
  * Helper method to create a plugin result with the specified value.

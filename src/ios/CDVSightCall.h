@@ -8,7 +8,9 @@
 #if !(TARGET_OS_SIMULATOR)
 @property (strong, nonatomic) LSUniversal* lsUniversal;
 #endif
+@property (nonatomic, copy) NSString *listenerCallbackID;
 
+- (void)registerListener:(CDVInvokedUrlCommand *)command;
 - (void)demo:(CDVInvokedUrlCommand*)command;
 - (void)isAgentAvailable:(CDVInvokedUrlCommand*)command;
 - (void)setNotificationToken:(CDVInvokedUrlCommand*)command;
