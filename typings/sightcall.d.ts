@@ -47,6 +47,14 @@ declare module SightCall {
         handleNotification(payload: any): void;
         startCall(url: string): void;
     }
+    interface StatusEvent {
+        status: string;
+    }
+    interface CallEndEvent {
+        endReason: string;
+        duration: number;
+        activeDuration: number;
+    }
 }
 
 declare var sightcall: SightCall.SightCallPlugin;
