@@ -58,5 +58,3 @@ declare module SightCall {
 }
 
 declare var sightcall: SightCall.SightCallPlugin;
-declare var StatusEvent: SightCall.StatusEvent;
-declare var CallEndEvent: SightCall.CallEndEvent;
