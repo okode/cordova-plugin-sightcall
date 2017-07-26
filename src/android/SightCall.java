@@ -43,19 +43,6 @@ public class SightCall extends CordovaPlugin {
         Universal.register(this);
     }
 
-    //On first run, this lifecycle method is not fired. So, we invoke the register method in plugin initialization.
-    @Override
-    public void onStart() {
-        super.onStart();
-        Universal.register(this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        Universal.unregister(this);
-    }
-
     @Override
     public void onReset() {
         super.onReset();
