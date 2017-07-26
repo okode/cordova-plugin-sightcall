@@ -42,7 +42,7 @@ NSString *const END_REMOTE = @"REMOTE";
     self.lsUniversal.delegate = self;
 }
 
--(void) connectionEvent:(lsConnectionStatus_t)status
+- (void) connectionEvent:(lsConnectionStatus_t)status
 {
     // We format the status data to return the same values in Android and iOS.
     NSString *statusData = NULL;
