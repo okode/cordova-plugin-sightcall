@@ -1,7 +1,6 @@
 #import <Cordova/CDVPlugin.h>
 #if !(TARGET_OS_SIMULATOR)
 #import <LSUniversalSDK/LSUniversalSDK.h>
-#endif
 
 @interface CDVSightCall : CDVPlugin<LSUniversalDelegate>
 
@@ -23,3 +22,4 @@
 - (void)handleNotification:(CDVInvokedUrlCommand*)command;
 
 @end
+#endif
