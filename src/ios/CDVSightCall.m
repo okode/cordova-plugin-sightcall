@@ -254,7 +254,7 @@ NSString *const END_REMOTE = @"REMOTE";
 
 - (BOOL)notifyListener:(NSString *)eventType data:(NSDictionary *)data {
     if (!self.listenerCallbackID) {
-        UA_LTRACE(@"Listener callback unavailable.  event %@", eventType);
+        NSLog(@"Listener callback unavailable.  event %@", eventType);
         return NO;
     }
     
