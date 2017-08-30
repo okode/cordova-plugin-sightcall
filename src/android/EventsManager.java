@@ -2,9 +2,11 @@ package com.okode.cordova.sightcall;
 
 import com.okode.cordova.sightcall.events.CallReport;
 import com.okode.cordova.sightcall.events.Event;
+import com.okode.cordova.sightcall.events.MediaSaved;
 import com.okode.cordova.sightcall.events.Status;
 import com.sightcall.universal.event.UniversalCallReportEvent;
 import com.sightcall.universal.event.UniversalStatusEvent;
+import com.sightcall.universal.media.MediaSavedEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +35,10 @@ public class EventsManager {
 
     public void sendCallReportEvent(UniversalCallReportEvent event) {
         this.notifyListener(new CallReport(event));
+    }
+
+    public void sendMediaSavedEvent(MediaSavedEvent event) {
+        this.notifyListener(new MediaSaved(event));
     }
 
     public void setListener(EventListener listener) {

@@ -10,6 +10,7 @@ import com.sightcall.universal.agent.model.GuestUsecase;
 import com.sightcall.universal.event.UniversalCallReportEvent;
 import com.sightcall.universal.event.UniversalStatusEvent;
 import com.sightcall.universal.internal.api.model.SightCallCredentials;
+import com.sightcall.universal.media.MediaSavedEvent;
 import com.sightcall.universal.util.Environment;
 
 import net.rtccloud.sdk.Event;
@@ -22,6 +23,8 @@ import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.File;
 
 import static com.okode.cordova.sightcall.Methods.DEMO;
 import static com.okode.cordova.sightcall.Methods.ENABLE_LOGGER;
@@ -65,6 +68,11 @@ public class SightCall extends CordovaPlugin {
     public void onCallFinished(UniversalCallReportEvent event) {
         Log.i(TAG, event.toString());
         EventsManager.instance().sendCallReportEvent(event);
+    }
+
+    @Event
+    public void onMediaSavedEvent(MediaSavedEvent event) {
+        EventsManager.instance().sendMediaSavedEvent(event);
     }
 
     @Override
