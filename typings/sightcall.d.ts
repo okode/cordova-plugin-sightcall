@@ -55,6 +55,10 @@ declare module SightCall {
         duration: number;
         activeDuration: number;
     }
+    interface MediaEvent {
+        path: string;
+        size: number;
+    }
 }
 
 declare var sightcall: SightCall.SightCallPlugin;
