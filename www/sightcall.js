@@ -93,8 +93,8 @@ SightCall.startCall = function(url) {
 
 SightCall.bindDocumentEvent = function() {
     exec(function(e) {
-      console.log("Firing document event: " + e.eventType)
-      cordova.fireDocumentEvent(e.eventType, e.eventData)
+      console.log("Firing document event: " + e.eventType + " with data " + e.eventData);
+      cordova.fireDocumentEvent(e.eventType, e.eventData);
     }, null, "SightCall", "registerListener", []);
 };
 
