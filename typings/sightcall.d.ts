@@ -56,7 +56,7 @@ declare module SightCall {
         activeDuration: number;
     }
     interface MediaEvent {
-        path: string;
+        filePath: string;
         size: number;
     }
 }

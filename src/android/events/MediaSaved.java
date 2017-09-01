@@ -15,7 +15,7 @@ import org.json.JSONObject;
 public class MediaSaved implements Event {
 
     private static final String MEDIA_EVENT_RECEIVED = "sightcall.mediaevent";
-    private static final String FILE_PATH_PARAM = "path";
+    private static final String FILE_PATH_PARAM = "filePath";
     private static final String FILE_SIZE_PARAM = "size";
 
 
