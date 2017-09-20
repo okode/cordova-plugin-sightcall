@@ -43,6 +43,7 @@ public class SightCall extends CordovaPlugin {
 
     @Override
     protected void pluginInitialize() {
+        Log.i(TAG, "Registering us for Sightcall's events");
         Universal.register(this);
     }
 
