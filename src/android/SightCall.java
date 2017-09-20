@@ -173,10 +173,6 @@ public class SightCall extends CordovaPlugin {
     }
 
     private void registerAgent(String token, String pin, final CallbackContext callback) {
-        if (Universal.agent().isAvailable()) {
-            callback.success("Agent is already registered");
-            return;
-        }
         if (token == null || pin == null) {
             callback.error("Error, token or pin param is NULL");
             return;
