@@ -81,17 +81,18 @@
         <config-file parent="/resources" target="res/values/strings.xml">
             <bool name="universal_feature_agent">true</bool>
         </config-file>
-        <config-file parent="/resources" target="res/values/strings.xml">
-            <string name="universal_feature_deeplink_uri">$UNIVERSAL_FEATURE_DEEPLINK_URI</string>
-        </config-file>
-        <config-file parent="/resources" target="res/values/strings.xml">
-            <string name="universal_feature_deeplink_uri_secondary">@string/universal_feature_deeplink_uri</string>
-        </config-file>
         <!--End Sight Call-->
 
         <source-file src="src/android/SightCall.java" target-dir="src/com/okode/cordova/sightcall" />
         <source-file src="src/android/FetchUseCasesCallback.java" target-dir="src/com/okode/cordova/sightcall" />
-    
+        <source-file src="src/android/EventsManager.java" target-dir="src/com/okode/cordova/sightcall" />
+        <source-file src="src/android/EventListener.java" target-dir="src/com/okode/cordova/sightcall" />
+        <source-file src="src/android/Constants.java" target-dir="src/com/okode/cordova/sightcall" />
+        <source-file src="src/android/events/CallReport.java" target-dir="src/com/okode/cordova/sightcall/events" />
+        <source-file src="src/android/events/Event.java" target-dir="src/com/okode/cordova/sightcall/events" />
+        <source-file src="src/android/events/Status.java" target-dir="src/com/okode/cordova/sightcall/events" />
+        <source-file src="src/android/events/MediaSaved.java" target-dir="src/com/okode/cordova/sightcall/events" />
+
         <framework src="src/android/build-extras.gradle" custom="true" type="gradleReference" />
         <framework src="com.google.firebase:firebase-core:+" />
         <framework src="com.google.firebase:firebase-messaging:+" />

@@ -12,6 +12,22 @@ typedef void (^CordovaExecutionBlock)(NSArray *args, CordovaCompletionHandler co
  */
 typedef void (^fetchUseCasesBlock)(BOOL success, NSString *msg,  NSArray<NSObject<LSMAUsecase> *> *usecaselist);
 
+// Events
+NSString *const EVENT_TYPE = @"eventType";
+NSString *const EVENT_DATA = @"eventData";
+NSString *const CALL_REPORT_EVENT_RECEIVED = @"sightcall.callreportevent";
+NSString *const STATUS_EVENT_RECEIVED = @"sightcall.statusevent";
+
+// UNIVERSAL STATUS
+NSString *const IDLE_STATUS = @"IDLE";
+NSString *const CONNECTING_STATUS = @"CONNECTING";
+NSString *const ACTIVE_STATUS = @"ACTIVE";
+
+// UNIVERSAL END REASON
+NSString *const END_FOR_UNEXPECTED_ERROR = @"UNEXPECTED";
+NSString *const END_LOCAL = @"LOCAL";
+NSString *const END_REMOTE = @"REMOTE";
+
 @implementation CDVSightCall
 
 #pragma mark - Plugin Initialization
@@ -19,6 +35,77 @@ typedef void (^fetchUseCasesBlock)(BOOL success, NSString *msg,  NSArray<NSObjec
 - (void)pluginInitialize
 {
     self.lsUniversal = [[LSUniversal alloc] init];
+}
+
+- (void)registerListener:(CDVInvokedUrlCommand *)command {
+    self.listenerCallbackID = command.callbackId;
+    self.lsUniversal.delegate = self;
+}
+
+- (void) connectionEvent:(lsConnectionStatus_t)status
+{
+    // We format the status data to return the same values in Android and iOS.
+    NSString *statusData = NULL;
+    switch (status) {
+        case lsConnectionStatus_idle:
+        {
+            statusData = IDLE_STATUS;
+            break;
+        }
+        case lsConnectionStatus_connecting:
+        {
+            statusData = CONNECTING_STATUS;
+            break;
+        }
+        case lsConnectionStatus_callActive:
+        {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.viewController presentViewController:self.lsUniversal.callViewController animated:YES completion:nil];
+            });
+            statusData = ACTIVE_STATUS;
+            break;
+        }
+        case lsConnectionStatus_disconnecting:
+            [self.viewController dismissViewControllerAnimated:TRUE completion:nil];
+            break;
+        default: break;
+    }
+    if (statusData != NULL) {
+        [self notifyListener:STATUS_EVENT_RECEIVED data:@{ @"status": statusData }];
+    }
+}
+
+- (void)connectionError:(lsConnectionError_t)error
+{
+    NSLog(@"SightCall connection error...");
+}
+
+
+- (void)callReport:(lsCallReport_s)callEnd
+{
+    NSString *callEndReason = NULL;
+    switch (callEnd.callEnd) {
+        case lsCallEnd_local:
+        {
+            callEndReason = END_LOCAL;
+            break;
+        }
+        case lsCallEnd_remote:
+        {
+            callEndReason = END_REMOTE;
+            break;
+        }
+        case lsCallEnd_unexpected:
+        {
+            callEndReason = END_FOR_UNEXPECTED_ERROR;
+            break;
+        }
+        default: break;
+    }
+    if (callEndReason != NULL) {
+        NSNumber *duration = [NSNumber numberWithDouble:callEnd.callLength];
+        [self notifyListener:CALL_REPORT_EVENT_RECEIVED data:@{ @"endReason": callEndReason, @"duration": duration }];
+    }
 }
 
 - (void)demo:(CDVInvokedUrlCommand*)command
@@ -164,6 +251,26 @@ typedef void (^fetchUseCasesBlock)(BOOL success, NSString *msg,  NSArray<NSObjec
         }
     }];
 }
+
+- (BOOL)notifyListener:(NSString *)eventType data:(NSDictionary *)data {
+    if (!self.listenerCallbackID) {
+        NSLog(@"Listener callback unavailable.  event %@", eventType);
+        return NO;
+    }
+    
+    NSMutableDictionary *message = [NSMutableDictionary dictionary];
+    [message setValue:eventType forKey:EVENT_TYPE];
+    [message setValue:data forKey:EVENT_DATA];
+    
+    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:message];
+    [result setKeepCallbackAsBool:YES];
+    
+    [self.commandDelegate sendPluginResult:result callbackId:self.listenerCallbackID];
+    return YES;
+}
+
+#pragma mark Cordova plugin utilities
+
 
 /**
  * Helper method to create a plugin result with the specified value.

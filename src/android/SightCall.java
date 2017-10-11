@@ -10,6 +10,7 @@ import com.sightcall.universal.agent.model.GuestUsecase;
 import com.sightcall.universal.event.UniversalCallReportEvent;
 import com.sightcall.universal.event.UniversalStatusEvent;
 import com.sightcall.universal.internal.api.model.SightCallCredentials;
+import com.sightcall.universal.media.MediaSavedEvent;
 import com.sightcall.universal.util.Environment;
 
 import net.rtccloud.sdk.Event;
@@ -18,8 +19,12 @@ import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CordovaWebView;
+import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
 
 import static com.okode.cordova.sightcall.Methods.DEMO;
 import static com.okode.cordova.sightcall.Methods.ENABLE_LOGGER;
@@ -28,6 +33,7 @@ import static com.okode.cordova.sightcall.Methods.GENERATE_URL;
 import static com.okode.cordova.sightcall.Methods.INVITE_GUEST;
 import static com.okode.cordova.sightcall.Methods.IS_AGENT_AVAILABLE;
 import static com.okode.cordova.sightcall.Methods.REGISTER_AGENT;
+import static com.okode.cordova.sightcall.Methods.REGISTER_LISTENER;
 import static com.okode.cordova.sightcall.Methods.SET_ENVIRONMENT;
 import static com.okode.cordova.sightcall.Methods.START_CALL;
 
@@ -37,30 +43,37 @@ public class SightCall extends CordovaPlugin {
 
     @Override
     protected void pluginInitialize() {
-        Universal.register(this);
-    }
-
-    //On first run, this lifecycle method is not fired. So, we invoke the register method in plugin initialization.
-    @Override
-    public void onStart() {
-        super.onStart();
+        Log.i(TAG, "Registering us for Sightcall's events");
         Universal.register(this);
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-        Universal.unregister(this);
+    public void onReset() {
+        super.onReset();
+        EventsManager.instance().setListener(null);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventsManager.instance().setListener(null);
     }
 
     @Event
     public void onStatusEvent(UniversalStatusEvent event) {
         Log.i(TAG, event.toString());
+        EventsManager.instance().sendStatusEvent(event);
     }
 
     @Event
     public void onCallFinished(UniversalCallReportEvent event) {
         Log.i(TAG, event.toString());
+        EventsManager.instance().sendCallReportEvent(event);
+    }
+
+    @Event
+    public void onMediaSavedEvent(MediaSavedEvent event) {
+        EventsManager.instance().sendMediaSavedEvent(event);
     }
 
     @Override
@@ -95,9 +108,37 @@ public class SightCall extends CordovaPlugin {
         } else if (GENERATE_URL.equals(action)) {
             this.generateURL(callbackContext);
             return true;
+        } else if (REGISTER_LISTENER.equals(action)) {
+            this.registerListener(callbackContext);
+            return true;
         }
         callbackContext.error(action + " is not a supported action");
         return false;
+    }
+
+    private void registerListener(final CallbackContext callbackContext) {
+        if (callbackContext == null) {
+            EventsManager.instance().setListener(null);
+            return;
+        }
+        EventsManager.instance().setListener(new EventListener() {
+            @Override
+            public void onEvent(com.okode.cordova.sightcall.events.Event event) {
+                JSONObject eventData = new JSONObject();
+
+                try {
+                    eventData.putOpt(com.okode.cordova.sightcall.events.Event.EVENT_TYPE, event.getEventName());
+                    eventData.putOpt(com.okode.cordova.sightcall.events.Event.EVENT_DATA, event.getEventData());
+                } catch (JSONException e) {
+                    Log.e(Constants.TAG, "Failed to create event: " + event);
+                    return;
+                }
+
+                PluginResult result = new PluginResult(PluginResult.Status.OK, eventData);
+                result.setKeepCallback(true);
+                callbackContext.sendPluginResult(result);
+            }
+        });
     }
 
     private void demo() {
@@ -133,10 +174,6 @@ public class SightCall extends CordovaPlugin {
     }
 
     private void registerAgent(String token, String pin, final CallbackContext callback) {
-        if (Universal.agent().isAvailable()) {
-            callback.success("Agent is already registered");
-            return;
-        }
         if (token == null || pin == null) {
             callback.error("Error, token or pin param is NULL");
             return;
@@ -261,4 +298,5 @@ final class Methods {
     final static String INVITE_GUEST = "invite";
     final static String GENERATE_URL = "generateCallURL";
     final static String START_CALL = "startCall";
+    final static String REGISTER_LISTENER = "registerListener";
 }
