@@ -22,7 +22,7 @@ FOUNDATION_EXPORT const unsigned char LSUniversalSDKVersionString[];
 #import <LSUniversalSDK/LSMAUsecase.h>
 #import <LSUniversalSDK/LSMATypes.h>
 
-#import <LSUniversalSDK/LSPictureUploadProtocol.h>
+#import <LSUniversalSDK/LSPictureProtocol.h>
 #import <LSUniversalSDK/LSSurveyInfosProtocol.h>
 
 #import <LSUniversalSDK/LSActivityEntry.h>

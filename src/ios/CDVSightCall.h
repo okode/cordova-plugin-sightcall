@@ -2,7 +2,7 @@
 #if !(TARGET_OS_SIMULATOR)
 #import <LSUniversalSDK/LSUniversalSDK.h>
 
-@interface CDVSightCall : CDVPlugin<LSUniversalDelegate>
+@interface CDVSightCall : CDVPlugin<LSUniversalDelegate, LSPictureProtocol>
 
 #if !(TARGET_OS_SIMULATOR)
 @property (strong, nonatomic) LSUniversal* lsUniversal;

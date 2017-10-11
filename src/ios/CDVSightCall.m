@@ -17,11 +17,13 @@ NSString *const EVENT_TYPE = @"eventType";
 NSString *const EVENT_DATA = @"eventData";
 NSString *const CALL_REPORT_EVENT_RECEIVED = @"sightcall.callreportevent";
 NSString *const STATUS_EVENT_RECEIVED = @"sightcall.statusevent";
+NSString *const MEDIA_EVENT_RECEIVED = @"sightcall.mediaevent";
 
 // UNIVERSAL STATUS
 NSString *const IDLE_STATUS = @"IDLE";
 NSString *const CONNECTING_STATUS = @"CONNECTING";
 NSString *const ACTIVE_STATUS = @"ACTIVE";
+NSString *const DISCONNECTING_STATUS = @"DISCONNECTING";
 
 // UNIVERSAL END REASON
 NSString *const END_FOR_UNEXPECTED_ERROR = @"UNEXPECTED";
@@ -40,6 +42,7 @@ NSString *const END_REMOTE = @"REMOTE";
 - (void)registerListener:(CDVInvokedUrlCommand *)command {
     self.listenerCallbackID = command.callbackId;
     self.lsUniversal.delegate = self;
+    [self.lsUniversal setPictureDelegate: self];
 }
 
 - (void) connectionEvent:(lsConnectionStatus_t)status
@@ -66,8 +69,13 @@ NSString *const END_REMOTE = @"REMOTE";
             break;
         }
         case lsConnectionStatus_disconnecting:
-            [self.viewController dismissViewControllerAnimated:TRUE completion:nil];
+        {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.viewController dismissViewControllerAnimated:TRUE completion:nil];
+            });
+            statusData = DISCONNECTING_STATUS;
             break;
+        }
         default: break;
     }
     if (statusData != NULL) {
@@ -105,6 +113,34 @@ NSString *const END_REMOTE = @"REMOTE";
     if (callEndReason != NULL) {
         NSNumber *duration = [NSNumber numberWithDouble:callEnd.callLength];
         [self notifyListener:CALL_REPORT_EVENT_RECEIVED data:@{ @"endReason": callEndReason, @"duration": duration }];
+    }
+}
+
+- (void)savedPicture:(UIImage *_Nullable)image andMetadata:(LSPictureMetadata *_Nullable)metadata {
+    NSLog(@"A picture has been taken: %@", image);
+    if (image != NULL) {
+        [self savePictoreOnDisk:image];
+    }
+}
+
+- (void)savePictoreOnDisk: (UIImage *_Nullable) image {
+    NSData *imageData = UIImagePNGRepresentation(image);
+    
+    NSString* tempDirectoryPath = NSTemporaryDirectory();
+    
+    long long now = (long long)([[NSDate date] timeIntervalSince1970] * 1000.0);
+    NSString *imagePath =[tempDirectoryPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%lld.png", now]];
+    
+    NSLog(@"pre writing to file");
+    if (![imageData writeToFile:imagePath atomically:NO])
+    {
+        NSLog(@"Failed to cache image data to disk");
+    }
+    else
+    {
+        NSNumber *fileSize = [NSNumber numberWithDouble:[imageData length]];
+        NSLog(@"Sightcall call image path is %@ and size %@", imagePath, fileSize);
+        [self notifyListener:MEDIA_EVENT_RECEIVED data:@{ @"filePath": imagePath, @"size": fileSize }];
     }
 }
 
@@ -247,7 +283,8 @@ NSString *const END_REMOTE = @"REMOTE";
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, CordovaCompletionHandler completionHandler) {
         NSDictionary *payload = [args objectAtIndex:0];
         if ([self.lsUniversal canHandleNotification:payload]) {
-            [self.lsUniversal handleNotification:payload];
+            NSString *url = payload[@"data"][@"guest_ready"][@"url"];
+            [self.lsUniversal startWithString:url];
         }
     }];
 }
