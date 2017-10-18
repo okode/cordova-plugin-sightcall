@@ -239,7 +239,7 @@ NSString *const END_REMOTE = @"REMOTE";
     }];
 }
 
-- (void)generateURL:(CDVInvokedUrlCommand*)command
+- (void)generateCallURL:(CDVInvokedUrlCommand*)command
 {
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, CordovaCompletionHandler completionHandler) {
         [self _fetchUseCases:^(BOOL success, NSString *msg, NSArray<NSObject<LSMAUsecase> *> *usecaselist) {
