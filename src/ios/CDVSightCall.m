@@ -1,3 +1,4 @@
+#define SYSTEM_VERSION_GRATERTHAN_OR_EQUALTO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
 #import "CDVSightCall.h"
 #if !(TARGET_OS_SIMULATOR)
 typedef void (^CordovaCompletionHandler)(CDVCommandStatus, id);
@@ -18,6 +19,7 @@ NSString *const EVENT_DATA = @"eventData";
 NSString *const CALL_REPORT_EVENT_RECEIVED = @"sightcall.callreportevent";
 NSString *const STATUS_EVENT_RECEIVED = @"sightcall.statusevent";
 NSString *const MEDIA_EVENT_RECEIVED = @"sightcall.mediaevent";
+NSString *const CALL_ACCEPTED_EVENT_RECEIVED = @"sightcall.ios.oncallaccepted";
 
 // UNIVERSAL STATUS
 NSString *const IDLE_STATUS = @"IDLE";
@@ -37,6 +39,9 @@ NSString *const END_REMOTE = @"REMOTE";
 - (void)pluginInitialize
 {
     self.lsUniversal = [[LSUniversal alloc] init];
+    PKPushRegistry *pushRegistry = [[PKPushRegistry alloc] initWithQueue:dispatch_get_main_queue()];
+    pushRegistry.delegate = self;
+    pushRegistry.desiredPushTypes = [NSSet setWithObject:PKPushTypeVoIP];
 }
 
 - (void)registerListener:(CDVInvokedUrlCommand *)command {
@@ -44,6 +49,8 @@ NSString *const END_REMOTE = @"REMOTE";
     self.lsUniversal.delegate = self;
     [self.lsUniversal setPictureDelegate: self];
 }
+
+#pragma mark - LSUniversalDelegate
 
 - (void) connectionEvent:(lsConnectionStatus_t)status
 {
@@ -122,27 +129,12 @@ NSString *const END_REMOTE = @"REMOTE";
         [self savePictoreOnDisk:image];
     }
 }
-
-- (void)savePictoreOnDisk: (UIImage *_Nullable) image {
-    NSData *imageData = UIImagePNGRepresentation(image);
-    
-    NSString* tempDirectoryPath = NSTemporaryDirectory();
-    
-    long long now = (long long)([[NSDate date] timeIntervalSince1970] * 1000.0);
-    NSString *imagePath =[tempDirectoryPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%lld.png", now]];
-    
-    NSLog(@"pre writing to file");
-    if (![imageData writeToFile:imagePath atomically:NO])
-    {
-        NSLog(@"Failed to cache image data to disk");
-    }
-    else
-    {
-        NSNumber *fileSize = [NSNumber numberWithDouble:[imageData length]];
-        NSLog(@"Sightcall call image path is %@ and size %@", imagePath, fileSize);
-        [self notifyListener:MEDIA_EVENT_RECEIVED data:@{ @"filePath": imagePath, @"size": fileSize }];
-    }
+- (void)callTheGuest:(NSString *)callURL {
+    NSLog(@"Calling the guest");
+    [self showLocalCallNotification:callURL];
 }
+
+#pragma mark - Functions declared
 
 - (void)demo:(CDVInvokedUrlCommand*)command
 {
@@ -158,13 +150,6 @@ NSString *const END_REMOTE = @"REMOTE";
         } else {
             completionHandler(CDVCommandStatus_ERROR, @"Agent not available");
         }
-    }];
-}
-
-- (void)setNotificationToken:(CDVInvokedUrlCommand*)command
-{
-    [self performCallbackWithCommand:command withBlock:^(NSArray *args, CordovaCompletionHandler completionHandler) {
-        [self.lsUniversal.agentHandler setNotificationToken:[args objectAtIndex:0]];
     }];
 }
 
@@ -266,27 +251,82 @@ NSString *const END_REMOTE = @"REMOTE";
     }];
 }
 
-- (void)canHandleNotification:(CDVInvokedUrlCommand*)command
-{
+- (void)isCallLocalNotification:(CDVInvokedUrlCommand*)command {
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, CordovaCompletionHandler completionHandler) {
-        NSDictionary *payload = [args objectAtIndex:0];
-        if ([self.lsUniversal canHandleNotification:payload]) {
-            completionHandler(CDVCommandStatus_OK, @"The notification could be handled");
+        NSDictionary *userInfo = [args objectAtIndex:0];
+        if ([CallLocalNotification isLocalCallNotification: userInfo]) {
+            completionHandler(CDVCommandStatus_OK, @"OK");
         } else {
-            completionHandler(CDVCommandStatus_ERROR, @"The notification couldn't be handled");
+            completionHandler(CDVCommandStatus_ERROR, @"ERROR");
         }
     }];
 }
 
-- (void)handleNotification:(CDVInvokedUrlCommand*)command
-{
+- (void)handleCallLocalNotification:(CDVInvokedUrlCommand*)command {
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, CordovaCompletionHandler completionHandler) {
-        NSDictionary *payload = [args objectAtIndex:0];
-        if ([self.lsUniversal canHandleNotification:payload]) {
-            NSString *url = payload[@"data"][@"guest_ready"][@"url"];
-            [self.lsUniversal startWithString:url];
-        }
+        NSDictionary *userInfo = [args objectAtIndex:0];
+        [self notifyListener:CALL_ACCEPTED_EVENT_RECEIVED data:userInfo];
     }];
+}
+
+/** Other utility methods
+ **/
+- (void)savePictoreOnDisk: (UIImage *_Nullable) image {
+    NSData *imageData = UIImagePNGRepresentation(image);
+    
+    NSString* tempDirectoryPath = NSTemporaryDirectory();
+    
+    long long now = (long long)([[NSDate date] timeIntervalSince1970] * 1000.0);
+    NSString *imagePath =[tempDirectoryPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%lld.png", now]];
+    
+    NSLog(@"pre writing to file");
+    if (![imageData writeToFile:imagePath atomically:NO])
+    {
+        NSLog(@"Failed to cache image data to disk");
+    }
+    else
+    {
+        NSNumber *fileSize = [NSNumber numberWithDouble:[imageData length]];
+        NSLog(@"Sightcall call image path is %@ and size %@", imagePath, fileSize);
+        [self notifyListener:MEDIA_EVENT_RECEIVED data:@{ @"filePath": imagePath, @"size": fileSize }];
+    }
+}
+
+- (void) registerCallNotificationCategory {
+     if (SYSTEM_VERSION_GRATERTHAN_OR_EQUALTO(@"10.0")) {
+         UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+         center.delegate = self;
+         // Register the notification categories.
+         UNNotificationCategory* callCategory = [CallLocalNotification getUNNNotificationCategory];
+         [center setNotificationCategories:[NSSet setWithObjects:callCategory,
+         nil]];
+     } else {
+         UIMutableUserNotificationCategory *callCategory = [CallLocalNotification getUIMutableUserNotificationCategory];
+         
+         UIUserNotificationSettings* notificationSettings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound categories: [NSSet setWithObject:callCategory]];
+         [[UIApplication sharedApplication] registerUserNotificationSettings:notificationSettings];
+     }
+}
+
+- (void)showLocalCallNotification: (NSString *)callUrl  {
+    [self registerCallNotificationCategory];
+    if (SYSTEM_VERSION_GRATERTHAN_OR_EQUALTO(@"10.0")) {
+        UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+        UNMutableNotificationContent* content = [CallLocalNotification buildCallNotificationContent: callUrl];
+        
+        UNTimeIntervalNotificationTrigger *trigger = [UNTimeIntervalNotificationTrigger triggerWithTimeInterval:1 repeats:false];
+        UNNotificationRequest* request = [UNNotificationRequest
+                                          requestWithIdentifier:@"SIGHTCALL_CALL_ALARM" content:content trigger:trigger];
+        [center addNotificationRequest:request withCompletionHandler:^(NSError * _Nullable error) {
+            if (error != nil) {
+                NSLog(@"%@", error.localizedDescription);
+            }
+        }];
+    } else {
+        UILocalNotification *localNotification = [CallLocalNotification buildUILocalNotification: callUrl];
+        [[UIApplication sharedApplication] presentLocalNotificationNow:localNotification];
+    }
+    
 }
 
 - (BOOL)notifyListener:(NSString *)eventType data:(NSDictionary *)data {
@@ -304,6 +344,50 @@ NSString *const END_REMOTE = @"REMOTE";
     
     [self.commandDelegate sendPluginResult:result callbackId:self.listenerCallbackID];
     return YES;
+}
+
+#pragma mark PushKit Delegate Methods
+
+- (void)pushRegistry:(PKPushRegistry *)registry didUpdatePushCredentials:(PKPushCredentials *)credentials forType:(NSString *)type{
+    if([credentials.token length] == 0) {
+        NSLog(@"voip token NULL");
+        return;
+    }
+    NSLog(@"PushCredentials: %@", credentials.token);
+    NSString *deviceTokenString = [[[[credentials.token description]
+                                      stringByReplacingOccurrencesOfString: @"<" withString: @""]
+                                     stringByReplacingOccurrencesOfString: @">" withString: @""]
+                                    stringByReplacingOccurrencesOfString: @" " withString: @""];
+    [self.lsUniversal.agentHandler setNotificationToken:deviceTokenString];
+}
+
+- (void)pushRegistry:(PKPushRegistry *)registry didReceiveIncomingPushWithPayload:(PKPushPayload *)payload forType:(NSString *)type
+{
+    NSLog(@"Received VoIP push notification");
+    if ([self.lsUniversal canHandleNotification:payload.dictionaryPayload]) {
+        [self.lsUniversal handleNotification:payload.dictionaryPayload];
+    }
+}
+
+#pragma mark UNUserNotificationCenterDelegate
+
+//Called when a notification is delivered to a foreground app.
+-(void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler{
+    NSLog(@"User Info : %@",notification.request.content.userInfo);
+    completionHandler(UNAuthorizationOptionSound | UNAuthorizationOptionAlert | UNAuthorizationOptionBadge);
+}
+
+//Called to let your app know which action was selected by the user for a given notification.
+-(void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void(^)())completionHandler{
+    NSLog(@"User Info : %@",response.notification.request.content.userInfo);
+    if ([response.notification.request.content.categoryIdentifier isEqualToString:CallLocalNotificationCategory]) {
+        // Handle actions
+        if ([response.actionIdentifier isEqualToString:CallLocalNotificationAcceptActionID])
+        {
+            [self notifyListener:CALL_ACCEPTED_EVENT_RECEIVED data:response.notification.request.content.userInfo];
+        }
+    }
+    completionHandler();
 }
 
 #pragma mark Cordova plugin utilities
