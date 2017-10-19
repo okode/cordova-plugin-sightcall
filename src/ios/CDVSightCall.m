@@ -19,6 +19,7 @@ NSString *const EVENT_DATA = @"eventData";
 NSString *const CALL_REPORT_EVENT_RECEIVED = @"sightcall.callreportevent";
 NSString *const STATUS_EVENT_RECEIVED = @"sightcall.statusevent";
 NSString *const MEDIA_EVENT_RECEIVED = @"sightcall.mediaevent";
+NSString *const GUEST_READY_EVENT_RECEIVED = @"sightcall.ios.onguestready";
 NSString *const CALL_ACCEPTED_EVENT_RECEIVED = @"sightcall.ios.oncallaccepted";
 
 // UNIVERSAL STATUS
@@ -131,6 +132,7 @@ NSString *const END_REMOTE = @"REMOTE";
 }
 - (void)callTheGuest:(NSString *)callURL {
     NSLog(@"Calling the guest");
+    [self notifyListener:GUEST_READY_EVENT_RECEIVED data:NULL];
     [self showLocalCallNotification:callURL];
 }
 
