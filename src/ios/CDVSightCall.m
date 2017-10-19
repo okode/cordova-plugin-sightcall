@@ -253,17 +253,6 @@ NSString *const END_REMOTE = @"REMOTE";
     }];
 }
 
-- (void)isCallLocalNotification:(CDVInvokedUrlCommand*)command {
-    [self performCallbackWithCommand:command withBlock:^(NSArray *args, CordovaCompletionHandler completionHandler) {
-        NSDictionary *userInfo = [args objectAtIndex:0];
-        if ([CallLocalNotification isLocalCallNotification: userInfo]) {
-            completionHandler(CDVCommandStatus_OK, @"OK");
-        } else {
-            completionHandler(CDVCommandStatus_ERROR, @"ERROR");
-        }
-    }];
-}
-
 - (void)handleCallLocalNotification:(CDVInvokedUrlCommand*)command {
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, CordovaCompletionHandler completionHandler) {
         NSDictionary *userInfo = [args objectAtIndex:0];

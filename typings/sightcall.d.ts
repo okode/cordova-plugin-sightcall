@@ -30,7 +30,7 @@ declare module SightCall {
          * Only available on iOS.
          * @param payload Push payload
          */
-        isCallLocalNotification(payload: any): Promise<void>;
+        isCallLocalNotification(payload: any): boolean;
         /**
          * This method handles the local notification displayed due to an entry call
          * and generates an event (only generated on iOS) to notice that the call has been accepted.

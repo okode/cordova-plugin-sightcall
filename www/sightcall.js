@@ -69,13 +69,7 @@ SightCall.isGuestReadyPush = function(payload) {
 };
 
 SightCall.isCallLocalNotification = function(payload) {
-    return new Promise(function(resolve, reject) {
-        exec(function() {
-            resolve();
-        }, function(error) {
-            reject(error);
-        }, "SightCall", "isCallLocalNotification", [payload]);
-    });
+    return payload != null && payload.extras != null && payload.extras.notificationId != 'SIGHTCALL_LOCALNOTIFICATION';
 };
 
 SightCall.handleCallLocalNotification = function(payload) {
