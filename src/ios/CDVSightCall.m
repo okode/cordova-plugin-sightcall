@@ -295,19 +295,16 @@ NSString *const END_REMOTE = @"REMOTE";
 }
 
 - (void) registerCallNotificationCategory {
-     if (SYSTEM_VERSION_GRATERTHAN_OR_EQUALTO(@"10.0")) {
-         UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
-         center.delegate = self;
-         // Register the notification categories.
-         UNNotificationCategory* callCategory = [CallLocalNotification getUNNNotificationCategory];
-         [center setNotificationCategories:[NSSet setWithObjects:callCategory,
-         nil]];
-     } else {
-         UIMutableUserNotificationCategory *callCategory = [CallLocalNotification getUIMutableUserNotificationCategory];
-         
-         UIUserNotificationSettings* notificationSettings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound categories: [NSSet setWithObject:callCategory]];
-         [[UIApplication sharedApplication] registerUserNotificationSettings:notificationSettings];
-     }
+    if (SYSTEM_VERSION_GRATERTHAN_OR_EQUALTO(@"10.0")) {
+        UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+        center.delegate = self;
+        // Register the notification categories.
+        UNNotificationCategory* callCategory = [CallLocalNotification getUNNNotificationCategory];
+        [center setNotificationCategories:[NSSet setWithObjects:callCategory,
+                                           nil]];
+    } else {
+        NSLOG(@'iOS version, lower than iOS 10, not supported for this action %@', @"registerCallNotificationCategory");
+    }
 }
 
 - (void)showLocalCallNotification: (NSString *)callUrl  {
@@ -322,13 +319,22 @@ NSString *const END_REMOTE = @"REMOTE";
         [center addNotificationRequest:request withCompletionHandler:^(NSError * _Nullable error) {
             if (error != nil) {
                 NSLog(@"%@", error.localizedDescription);
+                [self removeLocalCallNotification];
             }
         }];
     } else {
-        UILocalNotification *localNotification = [CallLocalNotification buildUILocalNotification: callUrl];
-        [[UIApplication sharedApplication] presentLocalNotificationNow:localNotification];
+        NSLOG(@'iOS version, lower than iOS 10, not supported for this action %@', @"showLocalCallNotification");
     }
-    
+}
+
+/** Removes the local call notification if the call has not been taken after 20 seconds
+ **/
+- (void) removeLocalCallNotification {
+    // Delay execution of my block for 20 seconds.
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 10 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+      UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+      [center removeDeliveredNotificationsWithIdentifiers:@[@"SIGHTCALL_CALL_ALARM"]];
+    });
 }
 
 - (BOOL)notifyListener:(NSString *)eventType data:(NSDictionary *)data {
@@ -357,9 +363,9 @@ NSString *const END_REMOTE = @"REMOTE";
     }
     NSLog(@"PushCredentials: %@", credentials.token);
     NSString *deviceTokenString = [[[[credentials.token description]
-                                      stringByReplacingOccurrencesOfString: @"<" withString: @""]
-                                     stringByReplacingOccurrencesOfString: @">" withString: @""]
-                                    stringByReplacingOccurrencesOfString: @" " withString: @""];
+                                     stringByReplacingOccurrencesOfString: @"<" withString: @""]
+                                    stringByReplacingOccurrencesOfString: @">" withString: @""]
+                                   stringByReplacingOccurrencesOfString: @" " withString: @""];
     [self.lsUniversal.agentHandler setNotificationToken:deviceTokenString];
 }
 
