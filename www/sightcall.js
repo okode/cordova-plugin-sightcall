@@ -14,10 +14,6 @@ SightCall.setEnvironment = function(environmentKey) {
     exec(null, null, "SightCall", "setEnvironment", [environmentKey]);
 };
 
-SightCall.setNotificationToken = function(token) {
-    exec(null, null, "SightCall", "setNotificationToken", [token]);
-};
-
 SightCall.isAgentAvailable = function() {
     return new Promise(function(resolve, reject) {
         exec(function() {
@@ -72,18 +68,18 @@ SightCall.isGuestReadyPush = function(payload) {
     return payload != null && payload.extras != null && payload.extras.guest_ready != null;
 };
 
-SightCall.canHandleNotification = function(payload) {
+SightCall.isCallLocalNotification = function(payload) {
     return new Promise(function(resolve, reject) {
         exec(function() {
             resolve();
         }, function(error) {
             reject(error);
-        }, "SightCall", "canHandleNotification", [payload]);
+        }, "SightCall", "isCallLocalNotification", [payload]);
     });
 };
 
-SightCall.handleNotification = function(payload) {
-    exec(null, null, "SightCall", "handleNotification", [payload]);
+SightCall.handleCallLocalNotification = function(payload) {
+    exec(null, null, "SightCall", "handleCallLocalNotification", [payload]);
 };
 
 SightCall.startCall = function(url) {
