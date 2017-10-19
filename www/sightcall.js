@@ -69,7 +69,7 @@ SightCall.isGuestReadyPush = function(payload) {
 };
 
 SightCall.isCallLocalNotification = function(payload) {
-    return payload != null && payload.extras != null && payload.extras.notificationId != 'SIGHTCALL_LOCALNOTIFICATION';
+    return payload != null && payload.extras != null && payload.extras.notificationId == 'SIGHTCALL_LOCALNOTIFICATION';
 };
 
 SightCall.handleCallLocalNotification = function(payload) {
