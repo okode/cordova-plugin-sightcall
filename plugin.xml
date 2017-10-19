@@ -20,6 +20,11 @@
 
     <!-- ios -->
     <platform name="ios">
+        <config-file target="*-Info.plist" parent="UIBackgroundModes">
+            <array>
+                <string>voip</string>
+            </array>
+        </config-file>
         <config-file target="config.xml" parent="/*">
             <feature name="SightCall">
                 <param name="ios-package" value="CDVSightCall" onload="true" />
