@@ -303,7 +303,7 @@ NSString *const END_REMOTE = @"REMOTE";
         [center setNotificationCategories:[NSSet setWithObjects:callCategory,
                                            nil]];
     } else {
-        NSLOG(@'iOS version, lower than iOS 10, not supported for this action %@', @"registerCallNotificationCategory");
+        NSLog(@"iOS version, lower than iOS 10, not supported for this action %@", @"registerCallNotificationCategory");
     }
 }
 
@@ -323,7 +323,7 @@ NSString *const END_REMOTE = @"REMOTE";
             }
         }];
     } else {
-        NSLOG(@'iOS version, lower than iOS 10, not supported for this action %@', @"showLocalCallNotification");
+        NSLog(@"iOS version, lower than iOS 10, not supported for this action %@", @"showLocalCallNotification");
     }
 }
 
