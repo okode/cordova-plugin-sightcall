@@ -54,15 +54,20 @@ SightCall.invite = function(phoneNumber) {
     });
 };
 
-SightCall.generateURL = function() {
+SightCall.generateURL = function(invitationId) {
     return new Promise(function(resolve, reject) {
         exec(function(url) {
             resolve(url);
         }, function(error) {
             reject(error);
-        }, "SightCall", "generateCallURL", []);
+        }, "SightCall", "generateCallURL", [invitationId]);
     });
 };
+
+SightCall.revokeInvitation = function(invitationId) {
+    exec(null, null, "SightCall", "revokeInvitation", [invitationId]);
+};
+
 
 SightCall.isGuestReadyPush = function(payload) {
     return payload != null && payload.extras != null && payload.extras.guest_ready != null;

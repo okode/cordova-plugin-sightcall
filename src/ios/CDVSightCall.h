@@ -22,6 +22,8 @@
 - (void)startCall:(CDVInvokedUrlCommand*)command;
 - (void)isCallLocalNotification:(CDVInvokedUrlCommand*)command;
 - (void)handleCallLocalNotification:(CDVInvokedUrlCommand*)command;
+- (void)revokeInvitation:(CDVInvokedUrlCommand*)command;
 
 @end
 #endif
+

@@ -229,9 +229,10 @@ NSString *const END_REMOTE = @"REMOTE";
 - (void)generateCallURL:(CDVInvokedUrlCommand*)command
 {
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, CordovaCompletionHandler completionHandler) {
+        NSString *invId = [args objectAtIndex:0];
         [self _fetchUseCases:^(BOOL success, NSString *msg, NSArray<NSObject<LSMAUsecase> *> *usecaselist) {
             if (success) {
-                [self.lsUniversal.agentHandler createInvitationForUsecase:(LSMAGuestUsecase*)[usecaselist objectAtIndex:0]  usingSuffix:@"GUEST" andNotify:^(BOOL didSucceed, NSString * _Nullable invite) {
+                [self.lsUniversal.agentHandler createInvitationForUsecase:(LSMAGuestUsecase*)[usecaselist objectAtIndex:0]  usingSuffix:invId andNotify:^(BOOL didSucceed, NSString * _Nullable invite) {
                     if (didSucceed) {
                         completionHandler(CDVCommandStatus_OK, invite);
                     } else {
@@ -257,6 +258,13 @@ NSString *const END_REMOTE = @"REMOTE";
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, CordovaCompletionHandler completionHandler) {
         NSDictionary *userInfo = [args objectAtIndex:0];
         [self notifyListener:CALL_ACCEPTED_EVENT_RECEIVED data:userInfo];
+    }];
+}
+
+- (void)revokeInvitation:(CDVInvokedUrlCommand*)command {
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args, CordovaCompletionHandler completionHandler) {
+        NSString *invId = [args objectAtIndex:0];
+        [self.lsUniversal.agentHandler cancelInvitationOfSuffix: invId];
     }];
 }
 
@@ -321,8 +329,8 @@ NSString *const END_REMOTE = @"REMOTE";
 - (void) removeLocalCallNotification {
     // Delay execution of my block for 20 seconds.
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 10 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-      UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
-      [center removeDeliveredNotificationsWithIdentifiers:@[@"SIGHTCALL_CALL_ALARM"]];
+        UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+        [center removeDeliveredNotificationsWithIdentifiers:@[@"SIGHTCALL_CALL_ALARM"]];
     });
 }
 
@@ -474,3 +482,4 @@ NSString *const END_REMOTE = @"REMOTE";
 
 @end
 #endif
+
