@@ -225,7 +225,12 @@ NSString *const END_REMOTE = @"REMOTE";
                     completionHandler(CDVCommandStatus_ERROR, @"Error, phone number is NULL");
                     return;
                 }
-                [self.lsUniversal.agentHandler sendNotificationForUsecase:(LSMAGuestUsecase*)[usecaselist objectAtIndex:0] toPhone:phoneNumber andDisplayName:@"GUEST" andNotify:^(NSInteger statusCode) {
+                LSMAGuestUsecase *usecase = [self getFirstUsecase:usecaselist];
+                if (usecase == NULL) {
+                    completionHandler(CDVCommandStatus_ERROR, @"No use cases configured for the agent");
+                    return;
+                }
+                [self.lsUniversal.agentHandler sendNotificationForUsecase:usecase toPhone:phoneNumber andDisplayName:@"GUEST" andNotify:^(NSInteger statusCode) {
                     if (statusCode == 200) {
                         completionHandler(CDVCommandStatus_OK, @"Invitation was sent successfully");
                     } else {
@@ -245,7 +250,12 @@ NSString *const END_REMOTE = @"REMOTE";
         NSString *invId = [args objectAtIndex:0];
         [self _fetchUseCases:^(BOOL success, NSString *msg, NSArray<NSObject<LSMAUsecase> *> *usecaselist) {
             if (success) {
-                [self.lsUniversal.agentHandler createInvitationForUsecase:(LSMAGuestUsecase*)[usecaselist objectAtIndex:0]  usingSuffix:invId andNotify:^(BOOL didSucceed, NSString * _Nullable invite) {
+                LSMAGuestUsecase *usecase = [self getFirstUsecase:usecaselist];
+                if (usecase == NULL) {
+                    completionHandler(CDVCommandStatus_ERROR, @"No use cases configured for the agent");
+                    return;
+                }
+                [self.lsUniversal.agentHandler createInvitationForUsecase:usecase  usingSuffix:invId andNotify:^(BOOL didSucceed, NSString * _Nullable invite) {
                     if (didSucceed) {
                         completionHandler(CDVCommandStatus_OK, invite);
                     } else {
@@ -257,6 +267,13 @@ NSString *const END_REMOTE = @"REMOTE";
             }
         }];
     }];
+}
+
+/** On Android, it works in this way, so we have implemented the solution equally.
+ **/
+- (LSMAGuestUsecase*)getFirstUsecase:(NSArray<NSObject<LSMAUsecase> *>*)usecaseList {
+    if (usecaseList == NULL || [usecaseList count] == 0) { return NULL; }
+    return (LSMAGuestUsecase*)[usecaseList objectAtIndex:0];
 }
 
 - (void)startCall:(CDVInvokedUrlCommand*)command
