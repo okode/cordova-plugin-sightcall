@@ -119,8 +119,12 @@ NSString *const END_REMOTE = @"REMOTE";
         default: break;
     }
     if (callEndReason != NULL) {
-        NSNumber *duration = [NSNumber numberWithDouble:callEnd.callLength];
-        [self notifyListener:CALL_REPORT_EVENT_RECEIVED data:@{ @"endReason": callEndReason, @"duration": duration }];
+        NSTimeInterval duration = callEnd.callLength;
+        NSNumber *time = [NSNumber numberWithInt:0];
+        if (!isnan(duration)) {
+            time = [NSNumber numberWithDouble:callEnd.callLength];
+        }
+        [self notifyListener:CALL_REPORT_EVENT_RECEIVED data:@{ @"endReason": callEndReason, @"duration": time }];
     }
 }
 
@@ -130,6 +134,15 @@ NSString *const END_REMOTE = @"REMOTE";
         [self savePictoreOnDisk:image];
     }
 }
+
+- (void)uploadingStop {
+    NSLog(@"Uploading picture stop");
+}
+
+- (void)uploadingPicture:(NSInteger)pictureID of:(NSInteger)maxID andThumbnail:(UIImage *_Nullable)image {
+    NSLog(@"Uploading picture");
+}
+
 - (void)callTheGuest:(NSString *)callURL {
     NSLog(@"Calling the guest");
     [self notifyListener:GUEST_READY_EVENT_RECEIVED data:NULL];

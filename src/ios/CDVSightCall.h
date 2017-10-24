@@ -20,7 +20,6 @@
 - (void)invite:(CDVInvokedUrlCommand*)command;
 - (void)generateCallURL:(CDVInvokedUrlCommand*)command;
 - (void)startCall:(CDVInvokedUrlCommand*)command;
-- (void)isCallLocalNotification:(CDVInvokedUrlCommand*)command;
 - (void)handleCallLocalNotification:(CDVInvokedUrlCommand*)command;
 - (void)revokeInvitation:(CDVInvokedUrlCommand*)command;
 
