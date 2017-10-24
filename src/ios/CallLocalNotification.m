@@ -15,7 +15,7 @@ NSString *const CallLocalNotificationID = @"SIGHTCALL_LOCALNOTIFICATION";
 NSString *const CallLocalNotificationAcceptActionID = @"ACCEPT_CALL";
 NSString *const CallLocalNotificationRejectActionID = @"REJECT_CALL";
 
-NSString *const NOTIFICATION_TITLE = @"Llamada entrande...";
+NSString *const NOTIFICATION_TITLE = @"Llamada entrante...";
 NSString *const NOTIFICATION_MSG = @"Pulse para aceptar la llamada";
 NSString *const NOTIFICATION_ACCEPT_ACTION = @"Accept";
 NSString *const NOTIFICATION_REJECT_ACTION = @"Reject";
