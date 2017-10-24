@@ -346,8 +346,8 @@ NSString *const END_REMOTE = @"REMOTE";
         [center addNotificationRequest:request withCompletionHandler:^(NSError * _Nullable error) {
             if (error != nil) {
                 NSLog(@"%@", error.localizedDescription);
-                [self removeLocalCallNotification];
             }
+            [self removeLocalCallNotification];
         }];
     } else {
         NSLog(@"iOS version, lower than iOS 10, not supported for this action %@", @"showLocalCallNotification");
@@ -358,7 +358,7 @@ NSString *const END_REMOTE = @"REMOTE";
  **/
 - (void) removeLocalCallNotification {
     // Delay execution of my block for 20 seconds.
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 10 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 40 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
         UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
         [center removeDeliveredNotificationsWithIdentifiers:@[@"SIGHTCALL_CALL_ALARM"]];
     });
