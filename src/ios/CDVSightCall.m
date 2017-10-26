@@ -171,10 +171,6 @@ NSString *const END_REMOTE = @"REMOTE";
 - (void)registerAgent:(CDVInvokedUrlCommand*)command
 {
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, CordovaCompletionHandler completionHandler) {
-        if ([self.lsUniversal.agentHandler isAvailable]) {
-            completionHandler(CDVCommandStatus_OK, @"Agent is already registered");
-            return;
-        }
         NSString *token = [args objectAtIndex:0];
         NSString *pin = [args objectAtIndex:1];
         if (pin == NULL || token == NULL) {
