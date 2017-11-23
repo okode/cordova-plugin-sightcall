@@ -14,10 +14,6 @@ SightCall.setEnvironment = function(environmentKey) {
     exec(null, null, "SightCall", "setEnvironment", [environmentKey]);
 };
 
-SightCall.setNotificationToken = function(token) {
-    exec(null, null, "SightCall", "setNotificationToken", [token]);
-};
-
 SightCall.isAgentAvailable = function() {
     return new Promise(function(resolve, reject) {
         exec(function() {
@@ -58,32 +54,31 @@ SightCall.invite = function(phoneNumber) {
     });
 };
 
-SightCall.generateURL = function() {
+SightCall.generateURL = function(invitationId) {
     return new Promise(function(resolve, reject) {
         exec(function(url) {
             resolve(url);
         }, function(error) {
             reject(error);
-        }, "SightCall", "generateCallURL", []);
+        }, "SightCall", "generateCallURL", [invitationId]);
     });
 };
+
+SightCall.revokeInvitation = function(invitationId) {
+    exec(null, null, "SightCall", "revokeInvitation", [invitationId]);
+};
+
 
 SightCall.isGuestReadyPush = function(payload) {
     return payload != null && payload.extras != null && payload.extras.guest_ready != null;
 };
 
-SightCall.canHandleNotification = function(payload) {
-    return new Promise(function(resolve, reject) {
-        exec(function() {
-            resolve();
-        }, function(error) {
-            reject(error);
-        }, "SightCall", "canHandleNotification", [payload]);
-    });
+SightCall.isCallLocalNotification = function(payload) {
+    return payload != null && payload.extras != null && payload.extras.notificationId == 'SIGHTCALL_LOCALNOTIFICATION';
 };
 
-SightCall.handleNotification = function(payload) {
-    exec(null, null, "SightCall", "handleNotification", [payload]);
+SightCall.handleCallLocalNotification = function(payload) {
+    exec(null, null, "SightCall", "handleCallLocalNotification", [payload]);
 };
 
 SightCall.startCall = function(url) {

@@ -67,7 +67,7 @@
 /**
  *  The picture upload delegate is notified when uploading is started, stopped and when a picture is uploading, along with some information regarding the picture being uploaded.
  */
-@property(nonatomic, weak) NSObject <LSPictureUpload> *pictureUploadDelegate;
+@property(nonatomic, weak) NSObject <LSPictureProtocol> *pictureDelegate;
 
 
 /**

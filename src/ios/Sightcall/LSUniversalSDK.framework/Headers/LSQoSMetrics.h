@@ -21,6 +21,8 @@ typedef NS_ENUM(NSInteger, LSQoSMetricStatus_t)
 	LSQoSMetricStatus_testCompleted, //the test is complete, no error
 	LSQoSMetricStatus_testCompletedWithError,  //the test is complete, an error occured
 	LSQoSMetricStatus_testCancelling, //the test was cancelled by the user
+	LSQoSMetricStatus_statsUploadDone,
+	LSQoSMetricStatus_statsUploadError,
 };
 
 typedef NS_ENUM(NSInteger, LSQoSEvaluationScore_t)

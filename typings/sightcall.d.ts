@@ -13,17 +13,23 @@ declare module SightCall {
          * @param environmentKey
          */
         setEnvironment(environmentKey: string): void;
-        /**
-         * The method configures the Apple Push Notification token in Sight Call's SDK.
-         * Only available on iOS.
-         * @param token
-         */
-        setNotificationToken(token: string): void;
         isAgentAvailable(): Promise<void>;
         registerAgent(token: string, pin: string): Promise<void>;
         fetchUseCases(): Promise<void>;
         invite(phoneNumber: string): Promise<void>;
-        generateURL(): Promise<string>;
+        /**
+         * Generates a call invitation URL.
+         * On iOS, the method will take into account the invitation ID passed as parameter.
+         * [invitationId Used on iOS to generate the invitation URL]
+         * @type {[type]}
+         */
+        generateURL(invitationId: string): Promise<string>;
+        /**
+         * Revokes a call invitation by invitation ID
+         * [invitationId Invitation ID]
+         * @type {[type]}
+         */
+        revokeInvitation(invitationId: string): void;
         /**
          * The method checks if the payload belongs to Sight Call and
          * if it has been received because the guest is ready to start the call.
@@ -32,20 +38,28 @@ declare module SightCall {
          */
         isGuestReadyPush(payload: any): boolean;
         /**
-         * The method checks if the payload belongs to Sight Call and
-         * if it has been received because the guest is ready to start the call.
+         * The method checks if the displayed notification is due to an entry Sightcall call
          * Only available on iOS.
          * @param payload Push payload
          */
-        canHandleNotification(payload: any): Promise<void>;
+        isCallLocalNotification(payload: any): boolean;
         /**
-         * The method provides the push payload received as parameter to SDK so that
-         * the SDK can perform some action if needed.
+         * This method handles the local notification displayed due to an entry call
+         * and generates an event (only generated on iOS) to notice that the call has been accepted.
+         * This method should be invoked after invoking 'isCallLocalNotification'
          * Only available on iOS.
          * @param payload Push payload
          */
-        handleNotification(payload: any): void;
+        handleCallLocalNotification(payload: any): void;
         startCall(url: string): void;
+        /**
+         * This method handles the local notification displayed due to an entry call
+         * and generates an event (only generated on iOS) to notice that the call has been accepted.
+         * This method should be invoked after invoking 'isCallLocalNotification'
+         * Only available on iOS.
+         * @param payload Push payload
+         */
+        handleCallLocalNotification(payload: any): void;
     }
     interface StatusEvent {
         status: string;
@@ -58,6 +72,10 @@ declare module SightCall {
     interface MediaEvent {
         filePath: string;
         size: number;
+    }
+    /** iOS event */
+    interface CallAcceptedEvent {
+        callUrl: string;
     }
 }
 
