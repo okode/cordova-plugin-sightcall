@@ -22,7 +22,7 @@ repositories {
 }
 
 dependencies {
-  compile 'com.sightcall.universal:universal-sdk:3.10.1'
+  compile 'com.sightcall.universal:universal-sdk:3.11.0'
 }
 
 ext.postBuildExtras = {
