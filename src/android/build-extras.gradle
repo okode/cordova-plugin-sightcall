@@ -3,7 +3,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.google.gms:google-services:3.0.0'
+        classpath 'com.google.gms:google-services:4.0.1'
     }
 }
 
@@ -22,7 +22,7 @@ repositories {
 }
 
 dependencies {
-  compile 'com.sightcall.universal:universal-sdk:3.3.0'
+  compile 'com.sightcall.universal:universal-sdk:3.11.0'
 }
 
 ext.postBuildExtras = {
