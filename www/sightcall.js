@@ -24,13 +24,13 @@ SightCall.isAgentAvailable = function() {
     });
 };
 
-SightCall.registerAgent = function(token, pin) {
+SightCall.registerAgent = function(token) {
     return new Promise(function(resolve, reject) {
         exec(function() {
             resolve();
         }, function(error) {
             reject(error);
-        }, "SightCall", "registerAgent", [token, pin]);
+        }, "SightCall", "registerAgent", [token]);
     });
 };
 
@@ -41,16 +41,6 @@ SightCall.fetchUseCases = function() {
         }, function(error) {
             reject(error);
         }, "SightCall", "fetchUseCases", []);
-    });
-};
-
-SightCall.invite = function(phoneNumber) {
-    return new Promise(function(resolve, reject) {
-        exec(function() {
-            resolve();
-        }, function(error) {
-            reject(error);
-        }, "SightCall", "invite", [phoneNumber]);
     });
 };
 

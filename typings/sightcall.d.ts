@@ -14,9 +14,8 @@ declare module SightCall {
          */
         setEnvironment(environmentKey: string): void;
         isAgentAvailable(): Promise<void>;
-        registerAgent(token: string, pin: string): Promise<void>;
+        registerAgent(token: string): Promise<void>;
         fetchUseCases(): Promise<void>;
-        invite(phoneNumber: string): Promise<void>;
         /**
          * Generates a call invitation URL.
          * On iOS, the method will take into account the invitation ID passed as parameter.

@@ -18,7 +18,6 @@ public class MediaSaved implements Event {
     private static final String FILE_PATH_PARAM = "filePath";
     private static final String FILE_SIZE_PARAM = "size";
 
-
     private MediaSavedEvent event;
 
     public MediaSaved(MediaSavedEvent event) {
