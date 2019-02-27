@@ -105,6 +105,7 @@
         <source-file src="src/android/events/Status.java" target-dir="src/com/okode/cordova/sightcall/events" />
         <source-file src="src/android/events/MediaSaved.java" target-dir="src/com/okode/cordova/sightcall/events" />
         <source-file src="src/android/events/GuestReady.java" target-dir="src/com/okode/cordova/sightcall/events" />
+        <source-file src="src/android/events/CallStart.java" target-dir="src/com/okode/cordova/sightcall/events" />
 
         <framework src="src/android/build-extras.gradle" custom="true" type="gradleReference" />
         <framework src="com.google.firebase:firebase-core:+" />
