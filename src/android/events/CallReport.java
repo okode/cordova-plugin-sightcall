@@ -18,6 +18,7 @@ public class CallReport implements Event {
     private static final String END_REASON = "endReason";
     private static final String DURATION = "duration";
     private static final String ACTIVE_DURATION = "activeDuration";
+    private static final String CASE_REPORT_ID = "caseReportId";
 
     private CallReportEvent event;
 
@@ -37,6 +38,7 @@ public class CallReport implements Event {
             data.putOpt(DURATION, this.event.duration());
             data.putOpt(ACTIVE_DURATION, this.event.activeDuration());
             data.putOpt(END_REASON, this.event.result().toString());
+            data.putOpt(CASE_REPORT_ID, this.event.session().caseReportId());
         } catch (JSONException e) {
             Log.e(Constants.TAG, "Error constructing notification object. Message: " + e);
         }

@@ -19,10 +19,10 @@ declare module SightCall {
         /**
          * Generates a call invitation URL.
          * On iOS, the method will take into account the invitation ID passed as parameter.
-         * [invitationId Used on iOS to generate the invitation URL]
+         * [referenceId]
          * @type {[type]}
          */
-        generateURL(invitationId: string): Promise<string>;
+        generateURL(referenceId: string): Promise<{ url: string; callId: string; }>;
         /**
          * Revokes a call invitation by invitation ID
          * [invitationId Invitation ID]
@@ -60,6 +60,12 @@ declare module SightCall {
          */
         handleCallLocalNotification(payload: any): void;
     }
+    interface GuestReadyEvent {
+        callId: string;
+    }
+    interface CallStartEvent {
+        callId: string;
+    }
     interface StatusEvent {
         status: string;
     }
@@ -67,10 +73,12 @@ declare module SightCall {
         endReason: string;
         duration: number;
         activeDuration: number;
+        caseReportId: string;
     }
     interface MediaEvent {
         filePath: string;
         size: number;
+        caseReportId: string;
     }
     /** iOS event */
     interface CallAcceptedEvent {

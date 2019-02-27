@@ -16,10 +16,19 @@ import com.sightcall.universal.agent.RegisterCallback;
 import com.sightcall.universal.agent.Registration;
 import com.sightcall.universal.agent.UniversalAgent;
 import com.sightcall.universal.agent.Usecase;
+import com.sightcall.universal.agent.Usecases;
 import com.sightcall.universal.api.Environment;
 import com.sightcall.universal.event.CallReportEvent;
 import com.sightcall.universal.fcm.messages.GuestReady;
 import com.sightcall.universal.media.MediaSavedEvent;
+import com.sightcall.universal.model.Config;
+import com.sightcall.universal.model.Session;
+import com.sightcall.universal.scenario.Step;
+import com.sightcall.universal.scenario.steps.CallStep;
+import com.sightcall.universal.scenario.steps.ConnectionStep;
+import com.sightcall.universal.scenario.steps.FetchReferenceStep;
+import com.sightcall.universal.scenario.steps.GuestPincodeCallStep;
+import com.sightcall.universal.scenario.steps.HostPincodeCallStep;
 
 import net.rtccloud.sdk.event.Event;
 import net.rtccloud.sdk.event.call.StatusEvent;
@@ -30,6 +39,8 @@ import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.List;
 
 import static com.okode.cordova.sightcall.Methods.DEMO;
 import static com.okode.cordova.sightcall.Methods.ENABLE_LOGGER;
@@ -44,6 +55,8 @@ import static com.okode.cordova.sightcall.Methods.START_CALL;
 public class SightCall extends CordovaPlugin {
 
     private static final String TAG = "SightCallPlugin";
+    private static final String URL_PARAM = "url";
+    private static final String CALL_ID_PARAM = "callId";
 
     @Override
     protected void pluginInitialize() {
@@ -66,7 +79,7 @@ public class SightCall extends CordovaPlugin {
     @Event
     public void onGuestReady(GuestReady event) {
         Log.i(TAG, event.toString());
-        EventsManager.instance().sendGuestReadyEvent(event);
+        EventsManager.instance().sendGuestReadyEvent(event.pincode());
     }
 
     @Event
@@ -86,6 +99,18 @@ public class SightCall extends CordovaPlugin {
         Log.i(TAG, event.toString());
         EventsManager.instance().sendMediaSavedEvent(event);
     }
+
+    @Event
+    public void onStepStateEvent(Step.StateEvent event) {
+        Log.i(TAG, event.toString());
+        boolean isActive = Step.State.ACTIVE.equals(event.state());
+        if (event.step() instanceof CallStep && isActive) {
+            CallStep activeCallStep = (CallStep) event.step();
+            String callId = getCallId(activeCallStep.session());
+            EventsManager.instance().sendCallStartEvent(callId);
+        }
+    }
+
 
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
@@ -114,7 +139,7 @@ public class SightCall extends CordovaPlugin {
             this.startCall(args.optString(0));
             return true;
         } else if (GENERATE_URL.equals(action)) {
-            this.generateURL(callbackContext);
+            this.generateURL(args.optString(0), callbackContext);
             return true;
         } else if (REGISTER_LISTENER.equals(action)) {
             this.registerListener(callbackContext);
@@ -250,17 +275,31 @@ public class SightCall extends CordovaPlugin {
         });
     }
 
-    private void generateURL(final CallbackContext callback) {
+    private void generateURL(final String referenceId, final CallbackContext callback) {
         this.fetchUseCases(new FetchUseCasesCallback() {
             @Override
             public void onFetchUsecasesSuccess() {
                 UniversalAgent agent = Universal.agent();
+
+                List<Usecase> cases = agent.usecases();
+                if (cases == null || cases.size() < 1) {
+                    callback.error("Error generating URL. No usecases set up for this agent");
+                    return;
+                }
+
                 Usecase usecase = agent.usecases().get(0);
-                CreateCode code = CreateCode.url(usecase).reference("REFERENCE_ID").build();
+                CreateCode code = CreateCode.url(usecase).reference(referenceId).build();
                 Universal.agent().createCode(code, new CreateCodeCallback() {
                     @Override public void onCreateCodeSuccess(@NonNull Success success) {
                         Code code = success.code();
-                        callback.success(code.url());
+                        JSONObject res = new JSONObject();
+                        try {
+                            res.put(URL_PARAM, code.url());
+                            res.put(CALL_ID_PARAM, code.value());
+                            callback.success(res);
+                        } catch (JSONException e) {
+                            callback.error("Error building URL invitation response");
+                        }
                     }
                     @Override public void onCreateCodeError(@NonNull Error error) {
                         callback.error("Error generating the call URL");
@@ -277,6 +316,10 @@ public class SightCall extends CordovaPlugin {
 
     private void startCall(String url) {
         Universal.start(url);
+    }
+
+    private String getCallId(Session session) {
+        return session != null && session.config() != null ? session.config().pin() : null;
     }
 }
 
