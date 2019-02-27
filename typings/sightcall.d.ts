@@ -14,7 +14,7 @@ declare module SightCall {
          */
         setEnvironment(environmentKey: string): void;
         isAgentAvailable(): Promise<void>;
-        registerAgent(token: string): Promise<void>;
+        registerAgent(token: string, apnsReference?: string): Promise<void>;
         fetchUseCases(): Promise<void>;
         /**
          * Generates a call invitation URL.

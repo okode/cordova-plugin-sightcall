@@ -24,13 +24,13 @@ SightCall.isAgentAvailable = function() {
     });
 };
 
-SightCall.registerAgent = function(token) {
+SightCall.registerAgent = function(token, apnsReference) {
     return new Promise(function(resolve, reject) {
         exec(function() {
             resolve();
         }, function(error) {
             reject(error);
-        }, "SightCall", "registerAgent", [token]);
+        }, "SightCall", "registerAgent", [token, apnsReference]);
     });
 };
 
