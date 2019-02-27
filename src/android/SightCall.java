@@ -282,7 +282,7 @@ public class SightCall extends CordovaPlugin {
                 UniversalAgent agent = Universal.agent();
 
                 List<Usecase> cases = agent.usecases();
-                if (cases == null || cases.size() < 1) {
+                if (cases == null || cases.size() == 0) {
                     callback.error("Error generating URL. No usecases set up for this agent");
                     return;
                 }
