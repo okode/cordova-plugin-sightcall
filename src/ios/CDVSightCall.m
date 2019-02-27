@@ -19,8 +19,8 @@ NSString *const EVENT_DATA = @"eventData";
 NSString *const CALL_REPORT_EVENT_RECEIVED = @"sightcall.callreportevent";
 NSString *const STATUS_EVENT_RECEIVED = @"sightcall.statusevent";
 NSString *const MEDIA_EVENT_RECEIVED = @"sightcall.mediaevent";
-NSString *const GUEST_READY_EVENT_RECEIVED = @"sightcall.ios.onguestready";
-NSString *const CALL_ACCEPTED_EVENT_RECEIVED = @"sightcall.ios.oncallaccepted";
+NSString *const GUEST_READY_EVENT_RECEIVED = @"sightcall.guestready";
+NSString *const CALL_ACCEPTED_EVENT_RECEIVED = @"sightcall.ios.callaccepted";
 
 // UNIVERSAL STATUS
 NSString *const IDLE_STATUS = @"IDLE";
