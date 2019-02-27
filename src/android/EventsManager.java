@@ -2,6 +2,7 @@ package com.okode.cordova.sightcall;
 
 import com.okode.cordova.sightcall.events.CallReport;
 import com.okode.cordova.sightcall.events.Event;
+import com.okode.cordova.sightcall.events.GuestReady;
 import com.okode.cordova.sightcall.events.MediaSaved;
 import com.okode.cordova.sightcall.events.Status;
 import com.sightcall.universal.event.CallReportEvent;
@@ -28,6 +29,10 @@ public class EventsManager {
 
     public static EventsManager instance() {
         return manager;
+    }
+
+    public void sendGuestReadyEvent(com.sightcall.universal.fcm.messages.GuestReady event) {
+        this.notifyListener(new GuestReady(event.caseReportId()));
     }
 
     public void sendStatusEvent(StatusEvent event) {

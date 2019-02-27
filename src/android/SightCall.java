@@ -18,6 +18,7 @@ import com.sightcall.universal.agent.UniversalAgent;
 import com.sightcall.universal.agent.Usecase;
 import com.sightcall.universal.api.Environment;
 import com.sightcall.universal.event.CallReportEvent;
+import com.sightcall.universal.fcm.messages.GuestReady;
 import com.sightcall.universal.media.MediaSavedEvent;
 
 import net.rtccloud.sdk.event.Event;
@@ -60,6 +61,12 @@ public class SightCall extends CordovaPlugin {
     public void onDestroy() {
         super.onDestroy();
         EventsManager.instance().setListener(null);
+    }
+
+    @Event
+    public void onGuestReady(GuestReady event) {
+        Log.i(TAG, event.toString());
+        EventsManager.instance().sendGuestReadyEvent(event);
     }
 
     @Event
