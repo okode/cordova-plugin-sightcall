@@ -156,6 +156,13 @@ NSString *const END_REMOTE = @"REMOTE";
     NSLog(@"SightCall: demo function invoked");
 }
 
+- (void)setEnvironment:(CDVInvokedUrlCommand *)command {
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args, CordovaCompletionHandler completionHandler) {
+        NSString *env = [[args objectAtIndex:0] lowercaseString];
+        [[NSUserDefaults standardUserDefaults] setObject:env forKey:@"kStorePlatform"];
+    }];
+}
+
 - (void)isAgentAvailable:(CDVInvokedUrlCommand*)command
 {
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, CordovaCompletionHandler completionHandler) {

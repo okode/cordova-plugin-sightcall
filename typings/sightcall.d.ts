@@ -7,11 +7,6 @@ declare module SightCall {
          * @param enabled
          */
         enableLogger(enabled: boolean): void;
-        /**
-         * It allows you to change the environment to PPR(pre-production) if you want.
-         * Only available on Android.
-         * @param environmentKey
-         */
         setEnvironment(environmentKey: string): void;
         isAgentAvailable(): Promise<void>;
         registerAgent(token: string, apnsReference?: string): Promise<void>;

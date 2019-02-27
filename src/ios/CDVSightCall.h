@@ -14,6 +14,7 @@
 
 - (void)registerListener:(CDVInvokedUrlCommand *)command;
 - (void)demo:(CDVInvokedUrlCommand*)command;
+- (void)setEnvironment:(CDVInvokedUrlCommand*)command;
 - (void)isAgentAvailable:(CDVInvokedUrlCommand*)command;
 - (void)registerAgent:(CDVInvokedUrlCommand*)command;
 - (void)fetchUseCases:(CDVInvokedUrlCommand*)command;
