@@ -19,6 +19,7 @@ NSString *const CALL_REPORT_EVENT_RECEIVED = @"sightcall.callreportevent";
 NSString *const STATUS_EVENT_RECEIVED = @"sightcall.statusevent";
 NSString *const MEDIA_EVENT_RECEIVED = @"sightcall.mediaevent";
 NSString *const GUEST_READY_EVENT_RECEIVED = @"sightcall.guestready";
+NSString *const CALL_START_EVENT_RECEIVED = @"sightcall.callstart";
 NSString *const CALL_ACCEPTED_EVENT_RECEIVED = @"sightcall.ios.callaccepted";
 
 // UNIVERSAL STATUS
@@ -144,7 +145,7 @@ NSString *const END_REMOTE = @"REMOTE";
 
 - (void)callTheGuest:(NSString *)callURL {
     NSLog(@"Calling the guest");
-    [self notifyListener:GUEST_READY_EVENT_RECEIVED data:NULL];
+    [self notifyListener:GUEST_READY_EVENT_RECEIVED data:@{ @"callId": [self getCallId:callURL] }];
     [self showLocalCallNotification:callURL];
 }
 
@@ -222,7 +223,8 @@ NSString *const END_REMOTE = @"REMOTE";
                 }
                 [self.lsUniversal.agentHandler createInvitationForUsecase: usecase withReference:reference andNotify:^(LSMAPincodeStatus_t status, NSString * _Nullable inviteURL) {
                     if (status == LSMAPincodeStatus_created) {
-                        completionHandler(CDVCommandStatus_OK, inviteURL);
+                        NSString* callId = [self getCallId:inviteURL];
+                        completionHandler(CDVCommandStatus_OK, @{ @"url": inviteURL, @"callId": callId });
                     } else {
                         completionHandler(CDVCommandStatus_ERROR, @"Error generating the call URL");
                     }
@@ -246,7 +248,23 @@ NSString *const END_REMOTE = @"REMOTE";
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, CordovaCompletionHandler completionHandler) {
         NSString *url = [args objectAtIndex:0];
         [self.lsUniversal startWithString:url];
+        NSString *callId = [self getCallId:url];
+        if (callId != NULL) {
+            [self notifyListener:CALL_START_EVENT_RECEIVED data:@{ @"callId":  callId}];
+        }
     }];
+}
+
+- (NSString*) getCallId:(NSString*) url {
+    NSURLComponents *parsedUrl = [NSURLComponents componentsWithString:url];
+    NSArray *queryItems = parsedUrl.queryItems;
+    if (queryItems == NULL) { return NULL; }
+    for (NSURLQueryItem *queryItem in queryItems) {
+        if ([queryItem.name isEqualToString:@"pin"]) {
+            return queryItem.value;
+        }
+    }
+    return NULL;
 }
 
 - (void)handleCallLocalNotification:(CDVInvokedUrlCommand*)command {
@@ -471,4 +489,3 @@ NSString *const END_REMOTE = @"REMOTE";
 
 @end
 #endif
-
