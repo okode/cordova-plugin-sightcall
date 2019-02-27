@@ -9,9 +9,8 @@ typedef void (^CordovaExecutionBlock)(NSArray *args, CordovaCompletionHandler co
  *
  *  @param success      YES if the fetch did succeed
  *  @param msg  The error message if there was an error
- *  @param usecaselist          List of use cases if the fetch did succeed
  */
-typedef void (^fetchUseCasesBlock)(BOOL success, NSString *msg,  NSArray<NSObject<LSMAUsecase> *> *usecaselist);
+typedef void (^fetchUseCasesBlock)(BOOL success, NSString *msg);
 
 // Events
 NSString *const EVENT_TYPE = @"eventType";
@@ -131,7 +130,7 @@ NSString *const END_REMOTE = @"REMOTE";
 - (void)savedPicture:(UIImage *_Nullable)image andMetadata:(LSPictureMetadata *_Nullable)metadata {
     NSLog(@"A picture has been taken: %@", image);
     if (image != NULL) {
-        [self savePictoreOnDisk:image];
+        [self savePictoreOnDisk:image with: metadata.caseID];
     }
 }
 
@@ -172,12 +171,12 @@ NSString *const END_REMOTE = @"REMOTE";
 {
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, CordovaCompletionHandler completionHandler) {
         NSString *token = [args objectAtIndex:0];
-        NSString *pin = [args objectAtIndex:1];
-        if (pin == NULL || token == NULL) {
-            completionHandler(CDVCommandStatus_ERROR, @"Error, token or pin param is NULL");
+        NSString *apnsReference = [args objectAtIndex:1];
+        if (token == NULL || apnsReference == NULL) {
+            completionHandler(CDVCommandStatus_ERROR, @"Error, token or APNS reference param is NULL");
         }
-        [self.lsUniversal.agentHandler registerWithPin:pin andToken:token onSignIn:^(BOOL success, NSInteger statusCode, RegistrationError_t status){
-            if (success) {
+        [self.lsUniversal.agentHandler registerWithCode:token andReference:apnsReference onSignIn:^(LSMARegistrationStatus_t t, NSString * _Nullable tokenID) {
+            if (t == LSMARegistrationStatus_registered) {
                 completionHandler(CDVCommandStatus_OK, @"Agent registration succeeded");
             } else {
                 completionHandler(CDVCommandStatus_ERROR, @"Agent registration failed");
@@ -189,18 +188,18 @@ NSString *const END_REMOTE = @"REMOTE";
 - (void)_fetchUseCases:(nonnull fetchUseCasesBlock) handler
 {
     if (![self.lsUniversal.agentHandler isAvailable]) {
-        handler(false, @"Register the agent before", NULL);
+        handler(false, @"Register the agent before");
         return;
     }
-    [self.lsUniversal.agentHandler fetchUsecases:^(BOOL success, NSArray<NSObject<LSMAUsecase> *> *usecaselist) {
-        handler(success, NULL, usecaselist);
+    [self.lsUniversal.agentHandler fetchIdentity:^(BOOL success) {
+        handler(success, NULL);
     }];
 }
 
 - (void)fetchUseCases:(CDVInvokedUrlCommand*)command
 {
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, CordovaCompletionHandler completionHandler) {
-        [self _fetchUseCases:^(BOOL success, NSString *msg, NSArray<NSObject<LSMAUsecase> *> *usecaselist) {
+        [self _fetchUseCases:^(BOOL success, NSString *msg) {
             if (success) {
                 completionHandler(CDVCommandStatus_OK, @"Use cases fetched successfully");
             } else {
@@ -210,50 +209,20 @@ NSString *const END_REMOTE = @"REMOTE";
     }];
 }
 
-
-- (void)invite:(CDVInvokedUrlCommand*)command
-{
-    [self performCallbackWithCommand:command withBlock:^(NSArray *args, CordovaCompletionHandler completionHandler) {
-        [self _fetchUseCases:^(BOOL success, NSString *msg, NSArray<NSObject<LSMAUsecase> *> *usecaselist) {
-            if (success) {
-                NSString *phoneNumber = [args objectAtIndex:0];
-                if (phoneNumber == NULL) {
-                    completionHandler(CDVCommandStatus_ERROR, @"Error, phone number is NULL");
-                    return;
-                }
-                LSMAGuestUsecase *usecase = [self getFirstUsecase:usecaselist];
-                if (usecase == NULL) {
-                    completionHandler(CDVCommandStatus_ERROR, @"No use cases configured for the agent");
-                    return;
-                }
-                [self.lsUniversal.agentHandler sendNotificationForUsecase:usecase toPhone:phoneNumber andDisplayName:@"GUEST" andNotify:^(NSInteger statusCode) {
-                    if (statusCode == 200) {
-                        completionHandler(CDVCommandStatus_OK, @"Invitation was sent successfully");
-                    } else {
-                        completionHandler(CDVCommandStatus_ERROR, @"Invitation couldn't be sent");
-                    }
-                }];
-            } else {
-                completionHandler(CDVCommandStatus_ERROR,  [NSString stringWithFormat:@"Error sending the invitation. Unexpected error fetching use cases. Reason: %@", msg]);
-            }
-        }];
-    }];
-}
-
 - (void)generateCallURL:(CDVInvokedUrlCommand*)command
 {
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, CordovaCompletionHandler completionHandler) {
-        NSString *invId = [args objectAtIndex:0];
-        [self _fetchUseCases:^(BOOL success, NSString *msg, NSArray<NSObject<LSMAUsecase> *> *usecaselist) {
+        NSString *reference = [args objectAtIndex:0];
+        [self _fetchUseCases:^(BOOL success, NSString *msg) {
             if (success) {
-                LSMAGuestUsecase *usecase = [self getFirstUsecase:usecaselist];
+                LSMAGuestUsecase *usecase = [self getFirstUsecase:[self.lsUniversal.agentHandler.identity pincodeUsecases]];
                 if (usecase == NULL) {
                     completionHandler(CDVCommandStatus_ERROR, @"No use cases configured for the agent");
                     return;
                 }
-                [self.lsUniversal.agentHandler createInvitationForUsecase:usecase  usingSuffix:invId andNotify:^(BOOL didSucceed, NSString * _Nullable invite) {
-                    if (didSucceed) {
-                        completionHandler(CDVCommandStatus_OK, invite);
+                [self.lsUniversal.agentHandler createInvitationForUsecase: usecase withReference:reference andNotify:^(LSMAPincodeStatus_t status, NSString * _Nullable inviteURL) {
+                    if (status == LSMAPincodeStatus_created) {
+                        completionHandler(CDVCommandStatus_OK, inviteURL);
                     } else {
                         completionHandler(CDVCommandStatus_ERROR, @"Error generating the call URL");
                     }
@@ -287,16 +256,9 @@ NSString *const END_REMOTE = @"REMOTE";
     }];
 }
 
-- (void)revokeInvitation:(CDVInvokedUrlCommand*)command {
-    [self performCallbackWithCommand:command withBlock:^(NSArray *args, CordovaCompletionHandler completionHandler) {
-        NSString *invId = [args objectAtIndex:0];
-        [self.lsUniversal.agentHandler cancelInvitationOfSuffix: invId];
-    }];
-}
-
 /** Other utility methods
  **/
-- (void)savePictoreOnDisk: (UIImage *_Nullable) image {
+- (void)savePictoreOnDisk:(UIImage *_Nullable)image with:(int32_t)caseId {
     NSData *imageData = UIImagePNGRepresentation(image);
     
     NSString* tempDirectoryPath = NSTemporaryDirectory();
@@ -313,7 +275,8 @@ NSString *const END_REMOTE = @"REMOTE";
     {
         NSNumber *fileSize = [NSNumber numberWithDouble:[imageData length]];
         NSLog(@"Sightcall call image path is %@ and size %@", imagePath, fileSize);
-        [self notifyListener:MEDIA_EVENT_RECEIVED data:@{ @"filePath": imagePath, @"size": fileSize }];
+        NSString *caseReportId = [NSString stringWithFormat:@"%d", caseId];
+        [self notifyListener:MEDIA_EVENT_RECEIVED data:@{ @"filePath": imagePath, @"size": fileSize, @"caseReportId": caseReportId }];
     }
 }
 

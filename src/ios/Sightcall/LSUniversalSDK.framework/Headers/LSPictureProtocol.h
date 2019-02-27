@@ -1,13 +1,12 @@
 //
-//  LSPictureUpload.h
+//  LSPictureProtocol.h
 //  LSUniversalSDK
-//
-//  Created by Charles Thierry on 23/01/17.
-//  Copyright © 2017 SightCall. All rights reserved.
 //
 
 #import <LSUniversalSDK/LSUniversalSDK.h>
 #import <CoreLocation/CoreLocation.h>
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  * The metadata of the picture
@@ -90,4 +89,4 @@
 
 
 
-
+NS_ASSUME_NONNULL_END

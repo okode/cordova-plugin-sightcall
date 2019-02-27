@@ -17,11 +17,9 @@
 - (void)isAgentAvailable:(CDVInvokedUrlCommand*)command;
 - (void)registerAgent:(CDVInvokedUrlCommand*)command;
 - (void)fetchUseCases:(CDVInvokedUrlCommand*)command;
-- (void)invite:(CDVInvokedUrlCommand*)command;
 - (void)generateCallURL:(CDVInvokedUrlCommand*)command;
 - (void)startCall:(CDVInvokedUrlCommand*)command;
 - (void)handleCallLocalNotification:(CDVInvokedUrlCommand*)command;
-- (void)revokeInvitation:(CDVInvokedUrlCommand*)command;
 
 @end
 #endif

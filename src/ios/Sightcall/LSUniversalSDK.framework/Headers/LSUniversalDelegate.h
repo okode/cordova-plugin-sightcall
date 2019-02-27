@@ -2,20 +2,18 @@
 //  LSUniversalDelegate.h
 //  LSUniversalSDK
 //
-//  Created by Charles Thierry on 21/03/17.
-//  Copyright © 2017 SightCall. All rights reserved.
-//
 
 
 #import <LSUniversalSDK/LSUniversalSDK.h>
+#import "LSConsentDescription.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 @protocol LSUniversalLogDelegate <NSObject>
 
 - (void)logLevel:(NSInteger)level logModule:(NSInteger)module fromMethod:(NSString *)from message:(NSString *)message, ... NS_REQUIRES_NIL_TERMINATION;
 
 @end
-
-
 
 /**
  *  The protocol the LSUniversalDelegate is to follow. Make no assumption regarding the thread that is used to trigger those messages.
@@ -57,11 +55,7 @@
  *  @param agentUID The UID of the agent that accepted the call.
  *  @sa acdProgressEvent:
  */
-- (void)acdAcceptedEvent:(NSString *)agentUID;
-
-
-- (void)connectionParameters:(NSDictionary *)parameters;
-- (void)cameraUsedOnStart:(lsCameraUsedOnStart_t)isFront;
+- (void)acdAcceptedEvent:(nullable NSString *)agentUID;
 
 /**
  *  Should this method be called, it will be at the end of a call. It contains all informations needed to open the survey webpage defined in the administration portal.
@@ -79,14 +73,30 @@
 
 /**
  *  The USDK is registered as an agent and sent an invite to a guest. The guest accepted. Use the URL to start the call.
- *  @param callURL	The url to use to start the call.
+ *  @param userResponse  This block *MUST* be triggered with YES if the user accepted to call the agent, NO if not.
  */
-- (void)callTheGuest:(NSString *)callURL;
+- (void)guestAcceptedCall:(nullable void(^)(BOOL))userResponse;
 
 /**
  *  The SDK is registered as an agent and is being asked to join a call to another agent. Use this URL to start the call.
- *  @param callURL	The URL to use to start the call.
+ *  @param callURL      The URL to use to start the call.
+ *  @param userResponse	This block *MUST* be triggered with YES if the user accepted to call the agent, NO if not.
  */
-- (void)callTheAgent:(NSString *)callURL;
+- (void)agentAcceptedCall:(nullable NSString *)callURL userResponse:(nullable void(^)(BOOL))userResponse;
+
+/**
+ *  The display consent must be displayed by the app.
+ *  Consent is either guest consent before a call, or agent consent during a fetchIdentity.
+ *  Consent must be agreed to for a call to start or for an agent to properly connect.
+ *  @param description  The variable contains all data to display
+ */
+- (void)displayConsentWithDescription:(nullable NSObject <LSConsentDescription> *)description;
+
+/**
+ * The registered agent received a push notification.
+ */
+- (void)testNotificationReceivedTitle:(nullable NSString *)title andBody:(nullable NSString *)body;
 
 @end
+
+NS_ASSUME_NONNULL_END
