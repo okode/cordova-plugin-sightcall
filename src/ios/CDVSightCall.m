@@ -245,7 +245,7 @@ static CDVSightCall *instance;
 
 #pragma mark - Plugin instance functions
 
-+ (void)setNotificationsDeviceToken:(NSString *)token {
++ (void)setNotificationDeviceToken:(NSString *)token {
     CDVSightCall *plugin = instance;
     if (plugin == NULL) { return; }
     [plugin.lsUniversal.agentHandler setNotificationToken: token];
