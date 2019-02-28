@@ -68,6 +68,7 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo
 fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler {
     NSLog(@"Sightcall - Notification received");
     [CDVSightCall handleSightcallPush:userInfo];
+    completionHandler(UIBackgroundFetchResultNewData);
 }
 
 @end
