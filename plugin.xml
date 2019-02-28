@@ -40,6 +40,8 @@
         <source-file src="src/ios/CDVSightCall.m" />
         <header-file src="src/ios/CallLocalNotification.h" />
         <source-file src="src/ios/CallLocalNotification.m" />
+        <source-file src="src/ios/AppDelegate+Sightcall.h" />
+        <source-file src="src/ios/AppDelegate+Sightcall.m" />
 
         <!--SightCall framework-->
         <framework src="src/ios/Sightcall/LSUniversalSDK.framework" custom="true" embed="true" />

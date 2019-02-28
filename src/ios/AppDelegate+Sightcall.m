@@ -54,12 +54,12 @@
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     
-    NSLog(@"Sightcall - Notifications device token received");
+    NSLog(@"Sightcall - Notifications device token received: %@", deviceToken);
     NSString * deviceTokenString = [[[[deviceToken description]
                                       stringByReplacingOccurrencesOfString: @"<" withString: @""]
                                      stringByReplacingOccurrencesOfString: @">" withString: @""]
                                     stringByReplacingOccurrencesOfString: @" " withString: @""];
-    [CDVSightCall setNotificationDeviceToken:deviceTokenString];
+    [plugin.lsUniversal.agentHandler setNotificationToken: token];
 }
 
 
