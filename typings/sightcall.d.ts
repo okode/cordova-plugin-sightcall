@@ -68,7 +68,6 @@ declare module SightCall {
         endReason: string;
         duration: number;
         activeDuration: number;
-        caseReportId: string;
     }
     interface MediaEvent {
         filePath: string;
