@@ -59,7 +59,7 @@
                                       stringByReplacingOccurrencesOfString: @"<" withString: @""]
                                      stringByReplacingOccurrencesOfString: @">" withString: @""]
                                     stringByReplacingOccurrencesOfString: @" " withString: @""];
-    [plugin.lsUniversal.agentHandler setNotificationToken: token];
+    [CDVSightCall setNotificationDeviceToken:deviceTokenString];
 }
 
 

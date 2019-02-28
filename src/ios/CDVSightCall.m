@@ -248,7 +248,7 @@ static CDVSightCall *instance;
 + (void)setNotificationsDeviceToken:(NSString *)token {
     CDVSightCall *plugin = instance;
     if (plugin == NULL) { return; }
-    [plugin.lsUniversal.agentHandler setNotificationToken: deviceTokenString];
+    [plugin.lsUniversal.agentHandler setNotificationToken: token];
 }
 
 + (void)handleSightcallPush:(NSDictionary *)userInfo {
