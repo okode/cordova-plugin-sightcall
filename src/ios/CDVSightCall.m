@@ -35,14 +35,14 @@ NSString *const END_REMOTE = @"REMOTE";
 
 @implementation CDVSightCall
 
+static CDVSightCall *instance;
+
 #pragma mark - Plugin Initialization
 
 - (void)pluginInitialize
 {
     self.lsUniversal = [[LSUniversal alloc] init];
-    PKPushRegistry *pushRegistry = [[PKPushRegistry alloc] initWithQueue:dispatch_get_main_queue()];
-    pushRegistry.delegate = self;
-    pushRegistry.desiredPushTypes = [NSSet setWithObject:PKPushTypeVoIP];
+    instance = self;
 }
 
 - (void)registerListener:(CDVInvokedUrlCommand *)command {
@@ -149,7 +149,7 @@ NSString *const END_REMOTE = @"REMOTE";
     [self showLocalCallNotification:callURL];
 }
 
-#pragma mark - Functions declared
+#pragma mark - Plugin functions
 
 - (void)demo:(CDVInvokedUrlCommand*)command
 {
@@ -241,6 +241,22 @@ NSString *const END_REMOTE = @"REMOTE";
             }
         }];
     }];
+}
+
+#pragma mark - Plugin instance functions
+
++ (void)setNotificationsDeviceToken:(NSString *)token {
+    CDVSightCall *plugin = instance;
+    if (plugin == NULL) { return; }
+    [plugin.lsUniversal.agentHandler setNotificationToken: deviceTokenString];
+}
+
++ (void)handleSightcallPush:(NSDictionary *)userInfo {
+    CDVSightCall *plugin = instance;
+    if (plugin == NULL) { return; }
+    if ([plugin.lsUniversal canHandleNotification:userInfo]) {
+        [plugin.lsUniversal handleNotification:userInfo];
+    }
 }
 
 /** On Android, it works in this way, so we have implemented the solution equally.
@@ -363,29 +379,6 @@ NSString *const END_REMOTE = @"REMOTE";
     
     [self.commandDelegate sendPluginResult:result callbackId:self.listenerCallbackID];
     return YES;
-}
-
-#pragma mark PushKit Delegate Methods
-
-- (void)pushRegistry:(PKPushRegistry *)registry didUpdatePushCredentials:(PKPushCredentials *)credentials forType:(NSString *)type{
-    if([credentials.token length] == 0) {
-        NSLog(@"voip token NULL");
-        return;
-    }
-    NSLog(@"PushCredentials: %@", credentials.token);
-    NSString *deviceTokenString = [[[[credentials.token description]
-                                     stringByReplacingOccurrencesOfString: @"<" withString: @""]
-                                    stringByReplacingOccurrencesOfString: @">" withString: @""]
-                                   stringByReplacingOccurrencesOfString: @" " withString: @""];
-    [self.lsUniversal.agentHandler setNotificationToken:deviceTokenString];
-}
-
-- (void)pushRegistry:(PKPushRegistry *)registry didReceiveIncomingPushWithPayload:(PKPushPayload *)payload forType:(NSString *)type
-{
-    NSLog(@"Received VoIP push notification");
-    if ([self.lsUniversal canHandleNotification:payload.dictionaryPayload]) {
-        [self.lsUniversal handleNotification:payload.dictionaryPayload];
-    }
 }
 
 #pragma mark UNUserNotificationCenterDelegate

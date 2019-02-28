@@ -3,9 +3,8 @@
 #import <UserNotifications/UserNotifications.h>
 #import <LSUniversalSDK/LSUniversalSDK.h>
 #import "CallLocalNotification.h"
-#import <PushKit/PushKit.h>
 
-@interface CDVSightCall : CDVPlugin<LSUniversalDelegate, LSPictureProtocol, UNUserNotificationCenterDelegate, PKPushRegistryDelegate>
+@interface CDVSightCall : CDVPlugin<LSUniversalDelegate, LSPictureProtocol, UNUserNotificationCenterDelegate>
 
 #if !(TARGET_OS_SIMULATOR)
 @property (strong, nonatomic) LSUniversal* lsUniversal;
@@ -22,6 +21,8 @@
 - (void)startCall:(CDVInvokedUrlCommand*)command;
 - (void)handleCallLocalNotification:(CDVInvokedUrlCommand*)command;
 
++ (void)setNotificationDeviceToken:(NSString*)token;
++ (void)handleSightcallPush:(NSDictionary*)userInfo;
 @end
 #endif
 
