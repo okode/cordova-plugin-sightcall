@@ -40,12 +40,12 @@ typedef NS_ENUM(NSInteger, LSQoSStop_t)
  * During the test, the video is capture from the device and sent back by the backend. Set a view as this property to display it.
  * @sa LSQoSMetric videoSize
  */
-@property (nonatomic, weak) UIView *renderView;
+@property (nonatomic, weak, nullable) UIView *renderView;
 
 /**
  * This object is instantiated upon starting the test. Its delegate property is set to the delegate parameter of startMirrorCall:usingDelegate:.
  */
-@property (nonatomic) LSQoSMetrics *currentSession;
+@property (nonatomic, nullable) LSQoSMetrics *currentSession;
 
 /**
  * Stop the QoS test. The delegate is notified when the actual stop took place.

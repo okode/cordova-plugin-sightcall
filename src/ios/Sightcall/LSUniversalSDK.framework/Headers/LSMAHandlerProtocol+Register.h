@@ -43,7 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Register an agent with an URL provided to the App.
  * The APN token must be set before calling this method.
- * @param url                   The URL received
+ * @param url                   The URL received. The URL is formatted as ://<host>/register/<pincode>
  * @param referenceID           The reference used to identify the App. Set in the admin portal.
  * @param registrationBlock     This block is fired on registration success or failure.
  */
