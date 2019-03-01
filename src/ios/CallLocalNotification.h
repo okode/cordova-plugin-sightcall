@@ -19,10 +19,10 @@ extern NSString *const CallLocalNotificationRejectActionID;
 
 /** Used on iOS 10+. On iOS9 or lower, use buildUILocalNotification
  **/
-+ (UNMutableNotificationContent*) buildCallNotificationContent: (NSString *)url;
++ (UNMutableNotificationContent*) buildCallNotificationContent: (NSDictionary *)sightcallPushPayload;
 /** Used on iOS 9 or lower. On iOS10+, use buildCallNotificationContent
  **/
-+ (UILocalNotification*) buildUILocalNotification: (NSString *)url;
++ (UILocalNotification*) buildUILocalNotification: (NSDictionary *)sightcallPushPayload;
 /** Used on iOS 10+. On iOS9 or lower, use buildUILocalNotification
  **/
 + (UNNotificationCategory*) getUNNNotificationCategory;

@@ -20,7 +20,6 @@ NSString *const STATUS_EVENT_RECEIVED = @"sightcall.statusevent";
 NSString *const MEDIA_EVENT_RECEIVED = @"sightcall.mediaevent";
 NSString *const GUEST_READY_EVENT_RECEIVED = @"sightcall.guestready";
 NSString *const CALL_START_EVENT_RECEIVED = @"sightcall.callstart";
-NSString *const CALL_ACCEPTED_EVENT_RECEIVED = @"sightcall.ios.callaccepted";
 
 // UNIVERSAL STATUS
 NSString *const IDLE_STATUS = @"IDLE";
@@ -143,10 +142,9 @@ static CDVSightCall *instance;
     NSLog(@"Uploading picture");
 }
 
-- (void)callTheGuest:(NSString *)callURL {
-    NSLog(@"Calling the guest");
-    [self notifyListener:GUEST_READY_EVENT_RECEIVED data:@{ @"callId": [self getCallId:callURL] }];
-    [self showLocalCallNotification:callURL];
+- (void)guestAcceptedCall:(nullable void(^)(BOOL))userResponse {
+    NSLog(@"The guest is calling");
+    userResponse(true);
 }
 
 #pragma mark - Plugin functions
@@ -255,7 +253,13 @@ static CDVSightCall *instance;
     CDVSightCall *plugin = instance;
     if (plugin == NULL) { return; }
     if ([plugin.lsUniversal canHandleNotification:userInfo]) {
-        [plugin.lsUniversal handleNotification:userInfo];
+        NSDictionary* guestReadyPayload = userInfo[@"guest-ready"];
+        NSString *callId = NULL;
+        if (guestReadyPayload != NULL) {
+            callId = guestReadyPayload[@"pincode"];
+        }
+        [plugin notifyListener:GUEST_READY_EVENT_RECEIVED data:@{ @"callId": callId }];
+        [plugin showLocalCallNotification:userInfo];
     }
 }
 
@@ -292,8 +296,7 @@ static CDVSightCall *instance;
 
 - (void)handleCallLocalNotification:(CDVInvokedUrlCommand*)command {
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, CordovaCompletionHandler completionHandler) {
-        NSDictionary *userInfo = [args objectAtIndex:0];
-        [self notifyListener:CALL_ACCEPTED_EVENT_RECEIVED data:userInfo];
+        [self handleCallLocalNotificationWithSightcallPayload: [args objectAtIndex:0]];
     }];
 }
 
@@ -334,11 +337,11 @@ static CDVSightCall *instance;
     }
 }
 
-- (void)showLocalCallNotification: (NSString *)callUrl  {
+- (void)showLocalCallNotification:(NSDictionary*)sightcallPushPayload  {
     [self registerCallNotificationCategory];
     if (SYSTEM_VERSION_GRATERTHAN_OR_EQUALTO(@"10.0")) {
         UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
-        UNMutableNotificationContent* content = [CallLocalNotification buildCallNotificationContent: callUrl];
+        UNMutableNotificationContent* content = [CallLocalNotification buildCallNotificationContent: sightcallPushPayload];
         
         UNTimeIntervalNotificationTrigger *trigger = [UNTimeIntervalNotificationTrigger triggerWithTimeInterval:1 repeats:false];
         UNNotificationRequest* request = [UNNotificationRequest
@@ -362,6 +365,15 @@ static CDVSightCall *instance;
         UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
         [center removeDeliveredNotificationsWithIdentifiers:@[@"SIGHTCALL_CALL_ALARM"]];
     });
+}
+
+- (void) handleCallLocalNotificationWithSightcallPayload:(NSDictionary *)userInfo {
+    if (userInfo == NULL) {
+        NSLog(@"Tried to handle an empty call local notification");
+        return;
+    }
+    NSDictionary *sightcallPushPayload = userInfo[@"sightcallPushPayload"];
+    [self.lsUniversal handleNotification:sightcallPushPayload];
 }
 
 - (BOOL)notifyListener:(NSString *)eventType data:(NSDictionary *)data {
@@ -396,7 +408,7 @@ static CDVSightCall *instance;
         // Handle actions
         if ([response.actionIdentifier isEqualToString:CallLocalNotificationAcceptActionID])
         {
-            [self notifyListener:CALL_ACCEPTED_EVENT_RECEIVED data:response.notification.request.content.userInfo];
+            [self handleCallLocalNotificationWithSightcallPayload: response.notification.request.content.userInfo];
         }
     }
     completionHandler();
