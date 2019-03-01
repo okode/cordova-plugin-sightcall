@@ -252,12 +252,13 @@ static CDVSightCall *instance;
 + (void)handleSightcallPush:(NSDictionary *)userInfo {
     CDVSightCall *plugin = instance;
     if (plugin == NULL) { return; }
-    if ([plugin.lsUniversal canHandleNotification:userInfo]) {
-        NSDictionary* guestReadyPayload = userInfo[@"guest-ready"];
-        NSString *callId = NULL;
+    NSDictionary* guestReadyPayload = userInfo != NULL ? userInfo[@"guest-ready"] : NULL;
+    if ([plugin.lsUniversal canHandleNotification:userInfo] && guestReadyPayload != NULL) {
+        NSString *pinCode = NULL;
         if (guestReadyPayload != NULL) {
-            callId = guestReadyPayload[@"pincode"];
+            pinCode = guestReadyPayload[@"pincode"];
         }
+        NSObject *callId = pinCode != NULL ? pinCode : [NSNull null];
         [plugin notifyListener:GUEST_READY_EVENT_RECEIVED data:@{ @"callId": callId }];
         [plugin showLocalCallNotification:userInfo];
     }
