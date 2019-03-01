@@ -34,6 +34,8 @@ NSString *const END_REMOTE = @"REMOTE";
 
 @implementation CDVSightCall
 
+@synthesize ignoreUsecaseConfiguration;
+
 static CDVSightCall *instance;
 
 #pragma mark - Plugin Initialization
@@ -42,6 +44,7 @@ static CDVSightCall *instance;
 {
     self.lsUniversal = [[LSUniversal alloc] init];
     instance = self;
+    self.ignoreUsecaseConfiguration = TRUE;
 }
 
 - (void)registerListener:(CDVInvokedUrlCommand *)command {
