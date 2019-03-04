@@ -31,9 +31,16 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) BOOL hasCredentials;
 
 /**
- * The application notification token. It must be set before the registration takes place.
+ 
  */
 @property (nonatomic, nullable) NSString *notificationToken;
+
+/**
+ 
+ */
+@property (nonatomic, nullable) NSString *notificationReference;
+
+
 
 /**
  * Call this method to test if the notification is correctly stored in the backend.

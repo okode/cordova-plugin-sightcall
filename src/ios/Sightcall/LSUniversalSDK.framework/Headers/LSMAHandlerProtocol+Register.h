@@ -23,6 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, nullable, readonly) NSObject <LSConsentDescription> *consent;
 
+
 - (void)clearCredentials;
 
 /**
@@ -32,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  While registering, the Mobile Agent Handler triggers the LSUniversal's delegate `connectionEvent:` with `lsConnectionStatus_agent...` parameters.
  *
  *  @param code                 The pin code used to register.
- *  @param referenceID          The reference used to identify the App. Set in the admin portal.
+ *  @param referenceID          The reference used to identify the App. Set in the admin portal. Registering succesfully will override the self.notificationReference with this value.
  *  @param registrationBlock    This block is fired on registration success or failure.
  */
 - (void)registerWithCode:(nonnull NSString *)code
@@ -44,7 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Register an agent with an URL provided to the App.
  * The APN token must be set before calling this method.
  * @param url                   The URL received. The URL is formatted as ://<host>/register/<pincode>
- * @param referenceID           The reference used to identify the App. Set in the admin portal.
+ * @param referenceID           The reference used to identify the App. Set in the admin portal. Registering succesfully will override the self.notificationReference with this value.
  * @param registrationBlock     This block is fired on registration success or failure.
  */
 - (void)registerWithURL:(nonnull NSString *)url
