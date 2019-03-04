@@ -95,6 +95,10 @@
         <config-file parent="/resources" target="res/values/strings.xml">
             <bool name="universal_feature_agent">true</bool>
         </config-file>
+        <config-file parent="/resources" target="res/values/strings.xml">
+            <bool name="universal_feature_media_export">false</bool>
+        </config-file>
+
         <!--End Sight Call-->
 
         <source-file src="src/android/SightCall.java" target-dir="src/com/okode/cordova/sightcall" />
