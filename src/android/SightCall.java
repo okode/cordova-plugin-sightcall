@@ -16,19 +16,13 @@ import com.sightcall.universal.agent.RegisterCallback;
 import com.sightcall.universal.agent.Registration;
 import com.sightcall.universal.agent.UniversalAgent;
 import com.sightcall.universal.agent.Usecase;
-import com.sightcall.universal.agent.Usecases;
 import com.sightcall.universal.api.Environment;
 import com.sightcall.universal.event.CallReportEvent;
 import com.sightcall.universal.fcm.messages.GuestReady;
 import com.sightcall.universal.media.MediaSavedEvent;
-import com.sightcall.universal.model.Config;
 import com.sightcall.universal.model.Session;
 import com.sightcall.universal.scenario.Step;
 import com.sightcall.universal.scenario.steps.CallStep;
-import com.sightcall.universal.scenario.steps.ConnectionStep;
-import com.sightcall.universal.scenario.steps.FetchReferenceStep;
-import com.sightcall.universal.scenario.steps.GuestPincodeCallStep;
-import com.sightcall.universal.scenario.steps.HostPincodeCallStep;
 
 import net.rtccloud.sdk.event.Event;
 import net.rtccloud.sdk.event.call.StatusEvent;
@@ -319,7 +313,10 @@ public class SightCall extends CordovaPlugin {
     }
 
     private String getCallId(Session session) {
-        return session != null && session.config() != null ? session.config().pin() : null;
+        if (session == null || session.config() == null || session.config().code() == null) {
+            return null;
+        }
+        return session.config().code().value();
     }
 }
 
