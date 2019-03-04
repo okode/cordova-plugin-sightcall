@@ -377,7 +377,11 @@ static CDVSightCall *instance;
         return;
     }
     NSDictionary *sightcallPushPayload = userInfo[@"sightcallPushPayload"];
-    [self.lsUniversal handleNotification:sightcallPushPayload];
+    if (sightcallPushPayload != NULL) {
+        NSString *callId = [sightcallPushPayload valueForKeyPath:@"guest-ready.pincode"];
+        [self notifyListener:CALL_START_EVENT_RECEIVED data:@{ @"callId":  callId}];
+        [self.lsUniversal handleNotification:sightcallPushPayload];
+    }
 }
 
 - (BOOL)notifyListener:(NSString *)eventType data:(NSDictionary *)data {
