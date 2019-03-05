@@ -17,7 +17,7 @@ Cordova Plugin for SightCall.
 - Add this to package.json below your dependencies section
 
 ```
-	"cordova-plugin-sightcall": "git+https://github.com/okode/cordova-plugin-sightcall.git#feature/3.0"
+	"cordova-plugin-sightcall": "git+https://github.com/okode/cordova-plugin-sightcall.git"
 ```
 
 - Add this to package.json below your cordova/plugins section
