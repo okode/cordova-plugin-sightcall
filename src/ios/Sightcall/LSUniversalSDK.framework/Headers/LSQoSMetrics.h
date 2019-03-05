@@ -1,13 +1,15 @@
 //
-//  LSUniversalQoSMetrics.h
+//  LSQoSMetrics.h
 //  LSUniversalSDK
-//
-//  Created by Charles Thierry on 05/06/2017.
-//  Copyright © 2017 SightCall. All rights reserved.
 //
 
 #import <LSUniversalSDK/LSUniversalSDK.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
+/**
+ Various status of the ongoing test.
+ */
 typedef NS_ENUM(NSInteger, LSQoSMetricStatus_t)
 {
 	LSQoSMetricStatus_none, //not doing anything
@@ -25,6 +27,11 @@ typedef NS_ENUM(NSInteger, LSQoSMetricStatus_t)
 	LSQoSMetricStatus_statsUploadError,
 };
 
+
+/**
+ * Possible values for the evaluation
+ *
+ */
 typedef NS_ENUM(NSInteger, LSQoSEvaluationScore_t)
 {
 	LSQoSEvaluationScore_notApplicable,
@@ -37,34 +44,85 @@ typedef NS_ENUM(NSInteger, LSQoSEvaluationScore_t)
 @class LSQoSMetrics;
 
 
+/**
+ * Structure containing the evaluation and values for a metric
+ */
 typedef struct {
 	NSInteger metricID;
 	struct{
+		/**
+		 * Between 0 and 10, 10 being best
+		 */
 		NSInteger metric;
 		LSQoSEvaluationScore_t score;
 	} uplink;
 	struct{
+		/**
+		 * Between 0 and 10, 10 being best
+		 */
 		NSInteger metric;
 		LSQoSEvaluationScore_t score;
 	} downlink;
 } LSQoSCallMetrics_s;
 
+/**
+ * Conform to this protocol to be notified of various event, including the connection status change, the call start and end, the evaluation start and end..
+ */
 @protocol LSQoSDelegate <NSObject>
 
+/**
+ * Metric of the ongoing test
+ */
 @property (nonatomic) LSQoSMetrics *callMetric;
 
+/**
+ * Status change
+ * @param newStatus	 The new state assumed by the SDK
+ * @sa LSQoSMetrics testStatus
+ */
 - (void)lsqosStatusChange:(LSQoSMetricStatus_t)newStatus;
 
+/**
+ * Fired upon test start, when the SDK has identified which network is being used.
+ * @param networkName	The network type (can be WiFi, 2G, 3G, etc)
+ * @param score			The score associated to that metric
+ */
 - (void)lsqosNetworkType:(NSString *)networkName andScore:(LSQoSEvaluationScore_t)score;
 
+/**
+ * Fired when the SDK is connecting to the platform.
+ * @param pfmName			The name of the platform we are connecting to.
+ * @param ms				RTT between the device and the platform
+ * @param score			The score associated to that metric
+ */
 - (void)lsqosPlatformSelected:(NSString *)pfmName withRTT:(float)ms andScore:(LSQoSEvaluationScore_t)score;
 
+/**
+ *	Quality of the call over a short period of time.
+ * @param metrics			The measurement of the uplink and downlink quality
+ * @param max				The total number of measurement that will be taken
+ *
+ */
 - (void)lsqosCallMetric:(LSQoSCallMetrics_s)metrics of:(NSInteger)max;
 
+/**
+ * Fired when the video size changes
+ * @param newVideoSize	The new size of the video layer
+ * @sa LSQoSManager 		renderView
+ */
 - (void)lsqosVideoSizeChange:(CGSize)newVideoSize;
 
+/**
+ *	Fired at the end of the call
+ * @param score			Global call evaluation
+ */
 - (void)lsqosGlobalMetric:(LSQoSEvaluationScore_t)score;
 
+/**
+ * At the end of the call, the stats are uploaded.
+ * @param success			YES if the stats where uploaded.
+ * @sa LSQoSMetrics shareURL
+ */
 - (void)lsqosStatsSent:(BOOL)success;
 
 @end
@@ -72,6 +130,9 @@ typedef struct {
 
 @interface LSQoSMetrics: NSObject
 
+/**
+ * Current status of the ongoing test.
+ */
 @property (nonatomic) LSQoSMetricStatus_t testStatus;
 
 /**
@@ -118,8 +179,14 @@ typedef struct {
  */
 @property (nonatomic, readonly) LSQoSEvaluationScore_t globalScore;
 
+/**
+ * Number of time measurement have been taken.
+ */
 @property (nonatomic, readonly) NSInteger currentCount;
 
+/**
+ * Max number of time measurement will be taken.
+ */
 @property (nonatomic, readonly) NSInteger maxCount;
 
 /**
@@ -128,9 +195,12 @@ typedef struct {
  */
 @property (nonatomic, readonly) CGSize videoSize;
 
+/**
+ * When the test is finished, the shareURL is set.
+ */
 @property (nonatomic, readonly) NSString *shareURL;
 
 @end
 
 
-
+NS_ASSUME_NONNULL_END

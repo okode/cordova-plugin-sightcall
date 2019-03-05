@@ -2,11 +2,10 @@
 //  LSUniversalType.h
 //  LSUniversalSDK
 //
-//  Created by Charles Thierry on 21/03/17.
-//  Copyright © 2017 SightCall. All rights reserved.
-//
 
 #import <LSUniversalSDK/LSUniversalSDK.h>
+
+NS_ASSUME_NONNULL_BEGIN
 
 /** @name Connection parameters ID keys.*/
 extern NSString *const kParametersMode;
@@ -40,50 +39,44 @@ extern NSString *const kParametersMPHash;
 extern NSString *const kParametersTimeout;
 
 
-/**
- *  Describes the state of the current connection.
- */
 typedef NS_ENUM(NSInteger, lsConnectionStatus_t) {
-	/**
-	 *  The LSUniversalSDK is not doing anything. This is the state it should go to after disconnecting.
-	 */
-	lsConnectionStatus_idle,
-	/**
-	 *  The LSUniversalSDK is connected as agent.
-	 */
-	lsConnectionStatus_agentConnected,
-	/**
-	 *  The LSUniversalSDK is refreshing the agent data.
-	 */
-	lsConnectionStatus_agentRefreshing,
-	/**
-	 *  The LSUniversalSDK is registering an agent.
-	 */
-	lsConnectionStatus_agentRegistering,
-	/**
-	 *  The LSUniversalSDK is connecting.
-	 */
-	lsConnectionStatus_connecting,
-	/**
-	 *  The LSUniversalSDK is connected. Depending on the authentication process, a call is being created.
-	 */
-	lsConnectionStatus_active,
-	/**
-	 *  A call was started.
-	 */
-	lsConnectionStatus_calling,
-	/**
-	 *	A call is active.
-	 */
-	lsConnectionStatus_callActive,
-	/**
-	 *	 The LSUniversalSDK is disconnecting.
-	 */
-	lsConnectionStatus_disconnecting,
-	/*
-	 *  The connection was lost.
-	 */
-	lsConnectionStatus_networkLoss,
+    lsConnectionStatus_idle,
+    /**
+     *  The LSUniversalSDK is connected as agent.
+     */
+    lsConnectionStatus_agentConnected,
+    /**
+     *  The LSUniversalSDK is registering an agent.
+     */
+    lsConnectionStatus_agentRegistering,
+    /**
+     *  The LSUniversalSDK is unregistering as agent.
+     */
+    lsConnectionStatus_agentUnregistering,
+    /**
+     *  The LSUniversalSDK is connecting.
+     */
+    lsConnectionStatus_connecting,
+    /**
+     *  The LSUniversalSDK is connected. Depending on the authentication process, a call is being created.
+     */
+    lsConnectionStatus_active,
+    /**
+     *  A call was started.
+     */
+    lsConnectionStatus_calling,
+    /**
+     *  A call is active.
+     */
+    lsConnectionStatus_callActive,
+    /**
+     *  The LSUniversalSDK is disconnecting.
+     */
+    lsConnectionStatus_disconnecting,
+    /*
+     *  The connection was lost.
+     */
+    lsConnectionStatus_networkLoss
 };
 
 /**
@@ -101,14 +94,14 @@ typedef NS_ENUM(NSInteger, lsConnectionError_t) {
 	/**
 	 *  An unknown error occured.
 	 */
-	lsConnectionError_unknown,
-};
+	lsConnectionError_unknown
+} ;
 
 /**
  *  The call ended, the LSUniversalSDK is disconnecting.
  */
 typedef NS_ENUM(NSInteger, lsCallEnd_t) {
-	/**
+    /**
 	 *  The call ended prematuraly
 	 */
 	lsCallEnd_unexpected,
@@ -120,18 +113,25 @@ typedef NS_ENUM(NSInteger, lsCallEnd_t) {
 	 *  the call was ended on your end.
 	 */
 	lsCallEnd_local,
-};
+    /**
+     *
+     */
+    lsCallEnd_eulaRefused
+} ;
 
+/**
+ * This structure describes the condition of the call end
+ */
 typedef struct {
+    /**
+     * Reason the call ended
+     */
 	lsCallEnd_t callEnd;
+    /**
+     * Duration of the call
+     */
 	NSTimeInterval callLength;
 } lsCallReport_s;
-
-typedef NS_ENUM(NSInteger, lsCameraUsedOnStart_t) {
-	lsCameraUsedOnStart_front,
-	lsCameraUsedOnStart_rear,
-	lsCameraUsedOnStart_none,
-};
 
 
 /**
@@ -152,7 +152,7 @@ typedef struct {
 /**
  * ACD Status.
  */
-typedef NS_ENUM(NSInteger, LSACDStatus_t ) {
+typedef NS_ENUM(NSInteger, LSACDStatus_t) {
 	/**
 	 */
 	acdStatus_invalid = -1,
@@ -171,8 +171,8 @@ typedef NS_ENUM(NSInteger, LSACDStatus_t ) {
 	/**
 	 * There is no agent available.
 	 */
-	acdStatus_agentUnavailable,
-};
+	acdStatus_agentUnavailable
+} ;
 
 
 /**
@@ -194,3 +194,4 @@ typedef struct {
 } LSACDQueue_s;
 
 
+NS_ASSUME_NONNULL_END

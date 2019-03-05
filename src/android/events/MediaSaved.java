@@ -17,7 +17,7 @@ public class MediaSaved implements Event {
     private static final String MEDIA_EVENT_RECEIVED = "sightcall.mediaevent";
     private static final String FILE_PATH_PARAM = "filePath";
     private static final String FILE_SIZE_PARAM = "size";
-
+    private static final String CASE_REPORT_ID = "caseReportId";
 
     private MediaSavedEvent event;
 
@@ -36,6 +36,7 @@ public class MediaSaved implements Event {
         try {
             data.putOpt(FILE_PATH_PARAM, this.event.media().image().getPath());
             data.putOpt(FILE_SIZE_PARAM, this.event.media().lengthInBytes());
+            data.putOpt(CASE_REPORT_ID, this.event.metadata().caseReportId());
         } catch (JSONException e) {
             Log.e(Constants.TAG, "Error constructing notification object. Message: " + e);
         }

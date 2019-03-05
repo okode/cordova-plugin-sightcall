@@ -2,9 +2,6 @@
 //  LSUniversalSDK.h
 //  LSUniversalSDK
 //
-//  Created by Charles Thierry on 25/08/15.
-//  Copyright (c) 2015 SightCall. All rights reserved.
-//
 
 #import <UIKit/UIKit.h>
 
@@ -19,14 +16,14 @@ FOUNDATION_EXPORT const unsigned char LSUniversalSDKVersionString[];
 #import <LSUniversalSDK/LSUniversalTypes.h>
 
 #import <LSUniversalSDK/LSMAHandlerProtocol.h>
+#import <LSUniversalSDK/LSMAHandlerProtocol+Register.h>
+#import <LSUniversalSDK/LSMAHandlerProtocol+Pincode.h>
 #import <LSUniversalSDK/LSMAUsecase.h>
+#import <LSUniversalSDK/LSMAAgentIdentity.h>
 #import <LSUniversalSDK/LSMATypes.h>
 
 #import <LSUniversalSDK/LSPictureProtocol.h>
 #import <LSUniversalSDK/LSSurveyInfosProtocol.h>
-
-#import <LSUniversalSDK/LSActivityEntry.h>
-#import <LSUniversalSDK/LSALContext.h>
 
 #import <LSUniversalSDK/LSCustomizationDelegate.h>
 #import <LSUniversalSDK/LSUniversalDelegate.h>

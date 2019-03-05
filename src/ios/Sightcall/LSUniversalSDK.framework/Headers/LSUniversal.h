@@ -1,12 +1,11 @@
 //
-//  Model.h
-//  RTCC Generic
-//
-//  Created by Charles Thierry on 19/09/14.
-//  Copyright (c) 2014 Charles Thierry. All rights reserved.
+//  LSUniversal.h
+//  LSUniversalSDK
 //
 
 #import <LSUniversalSDK/LSUniversalSDK.h>
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  The LSUniversal object is your point of entry to the connection and call control. The Callflow is simplified to the max:
@@ -59,10 +58,8 @@
  *  This object is responsible for sending the notifications to a remote contact (e.g. in the Agent-to-Guest case). It needs the Apple Notification token to work (see APNS).
  *  This object is available after the init is done, until destruction of the LSUniversal instance.
  */
-@property(nonatomic, readonly) NSObject<LSMAHandler> *agentHandler;
+@property(nonatomic, readonly) NSObject<LSMAHandler, LSMAHandlerPincode, LSMAHandlerRegister> *agentHandler;
 
-
-@property(nonatomic, readonly) NSObject<LSALContext> *activityHandler;
 
 /**
  *  The picture upload delegate is notified when uploading is started, stopped and when a picture is uploading, along with some information regarding the picture being uploaded.
@@ -75,22 +72,20 @@
  *
  *  @param dictionary The key/value used to connect
  *
- *  @return True if the dictionary allows for connection. If false, something is missing from the dictionary.
  *  @sa startWithString:
  *  @sa abort
  */
-- (BOOL)startWithDictionary:(NSDictionary *)dictionary;
+- (void)startWithDictionary:(NSDictionary *)dictionary;
 
 /**
  *  Connects the LSUniversalSDK to SightCall's cloud. From this string is made a dictionary used in startWithDictionary:
  *
  *  @param param The string used to create the dictionary. It can be an URL string such as the one used in the Universal App (i.e. "sightcall://?mode=value&..."), or simply "mode=value&...". `?`, `=` and `&` are used as separators.
  *
- *  @return True if the string allows for connection. If false, something is missing from the library
  *  @sa startWithDictionary:
  *  @sa abort
  */
-- (BOOL)startWithString:(NSString *)param;
+- (void)startWithString:(NSString *)param;
 
 /**
  *  Disconnects the LSUniversalSDK from the cloud. Hangup the call if any.
@@ -116,3 +111,7 @@
 - (void)handleNotification:(NSDictionary *)notification;
 
 @end
+
+
+NS_ASSUME_NONNULL_END
+
