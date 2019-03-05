@@ -1,13 +1,12 @@
 //
-//  LSPictureUpload.h
+//  LSPictureProtocol.h
 //  LSUniversalSDK
-//
-//  Created by Charles Thierry on 23/01/17.
-//  Copyright © 2017 SightCall. All rights reserved.
 //
 
 #import <LSUniversalSDK/LSUniversalSDK.h>
 #import <CoreLocation/CoreLocation.h>
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  * The metadata of the picture
@@ -67,8 +66,7 @@
 /**
  
  This method informs you that a picture is being uploaded, how many pictures were to be uploaded and how many of them are left. It also provides the app with 
- a thumbnail of the picture. uploadingStart is called before this method is
- called, and this method is called whenever a new picture is being uploaded.
+ a thumbnail of the picture. uploadingStart is called before this method is called, and this method is called whenever a new picture is being uploaded.
  
  @param pictureID The ID of the picture. Pictures may be uploaded in a different order than they are taken.
  @param maxID The number of pictures to be uploaded.
@@ -83,11 +81,17 @@
  * When the usecase is configured to store the picture as local, the picture is handled to the App.
  * @param image		The image that was captured, full resolution
  * @param metadata	The metadata linked to the image.
+ * @sa ignoreUsecaseConfiguration
  */
 - (void)savedPicture:(UIImage *_Nullable)image andMetadata:(LSPictureMetadata *_Nullable)metadata;
+
+/**
+ * If YES, the image is passed to the App to handle the local storage. Otherwise the picture is stored according to the Save picture configuration of the usecase.
+ */
+@property (nonatomic) BOOL ignoreUsecaseConfiguration;
 
 @end
 
 
 
-
+NS_ASSUME_NONNULL_END

@@ -1,12 +1,15 @@
 package com.okode.cordova.sightcall;
 
 import com.okode.cordova.sightcall.events.CallReport;
+import com.okode.cordova.sightcall.events.CallStart;
 import com.okode.cordova.sightcall.events.Event;
+import com.okode.cordova.sightcall.events.GuestReady;
 import com.okode.cordova.sightcall.events.MediaSaved;
 import com.okode.cordova.sightcall.events.Status;
-import com.sightcall.universal.event.UniversalCallReportEvent;
-import com.sightcall.universal.event.UniversalStatusEvent;
+import com.sightcall.universal.event.CallReportEvent;
 import com.sightcall.universal.media.MediaSavedEvent;
+
+import net.rtccloud.sdk.event.call.StatusEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,11 +32,19 @@ public class EventsManager {
         return manager;
     }
 
-    public void sendStatusEvent(UniversalStatusEvent event) {
+    public void sendGuestReadyEvent(String callId) {
+        this.notifyListener(new GuestReady(callId));
+    }
+
+    public void sendCallStartEvent(String callId) {
+        this.notifyListener(new CallStart(callId));
+    }
+
+    public void sendStatusEvent(StatusEvent event) {
         this.notifyListener(new Status(event));
     }
 
-    public void sendCallReportEvent(UniversalCallReportEvent event) {
+    public void sendCallReportEvent(CallReportEvent event) {
         this.notifyListener(new CallReport(event));
     }
 

@@ -1,12 +1,9 @@
 package com.okode.cordova.sightcall.events;
 
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.okode.cordova.sightcall.Constants;
-import com.sightcall.universal.event.UniversalCallReportEvent;
-
-import net.rtccloud.sdk.Call;
+import com.sightcall.universal.event.CallReportEvent;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,9 +19,9 @@ public class CallReport implements Event {
     private static final String DURATION = "duration";
     private static final String ACTIVE_DURATION = "activeDuration";
 
-    private UniversalCallReportEvent event;
+    private CallReportEvent event;
 
-    public CallReport(UniversalCallReportEvent event) {
+    public CallReport(CallReportEvent event) {
         this.event = event;
     }
 

@@ -21,7 +21,7 @@ NSString *const NOTIFICATION_ACCEPT_ACTION = @"Accept";
 NSString *const NOTIFICATION_REJECT_ACTION = @"Reject";
 
 
-+ (UNMutableNotificationContent*) buildCallNotificationContent: (NSString *)callUrl {
++ (UNMutableNotificationContent*) buildCallNotificationContent: (NSDictionary *)sightcallPushPayload {
     UNMutableNotificationContent* content = [[UNMutableNotificationContent alloc] init];
     content.title = [NSString localizedUserNotificationStringForKey:NOTIFICATION_TITLE arguments:nil];
     content.body = [NSString localizedUserNotificationStringForKey:NOTIFICATION_MSG
@@ -29,21 +29,21 @@ NSString *const NOTIFICATION_REJECT_ACTION = @"Reject";
     content.sound = [UNNotificationSound defaultSound];
     
     content.categoryIdentifier = CallLocalNotificationCategory;
-    content.userInfo = [CallLocalNotification buildNotificationInfo:callUrl];
+    content.userInfo = [CallLocalNotification buildNotificationInfo:sightcallPushPayload];
     return content;
 }
 
-+ (UILocalNotification*) buildUILocalNotification: (NSString *)callUrl {
++ (UILocalNotification*) buildUILocalNotification: (NSDictionary *)sightcallPushPayload {
     UILocalNotification *localNotification = [[UILocalNotification alloc] init];
     localNotification.alertBody = NOTIFICATION_TITLE;
     localNotification.soundName = UILocalNotificationDefaultSoundName;
     localNotification.category = CallLocalNotificationCategory;
-    localNotification.userInfo = [CallLocalNotification buildNotificationInfo:callUrl];
+    localNotification.userInfo = [CallLocalNotification buildNotificationInfo:sightcallPushPayload];
     return localNotification;
 }
 
-+ (NSDictionary*) buildNotificationInfo: (NSString *)callUrl {
-    return @{ @"callUrl": callUrl, @"notificationId": CallLocalNotificationID };
++ (NSDictionary*) buildNotificationInfo: (NSDictionary *)sightcallPushPayload {
+    return @{ @"sightcallPushPayload": sightcallPushPayload, @"notificationId": CallLocalNotificationID };
 }
 
 + (UNNotificationCategory*) getUNNNotificationCategory {

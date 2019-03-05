@@ -7,23 +7,17 @@ declare module SightCall {
          * @param enabled
          */
         enableLogger(enabled: boolean): void;
-        /**
-         * It allows you to change the environment to PPR(pre-production) if you want.
-         * Only available on Android.
-         * @param environmentKey
-         */
         setEnvironment(environmentKey: string): void;
         isAgentAvailable(): Promise<void>;
-        registerAgent(token: string, pin: string): Promise<void>;
+        registerAgent(token: string, apnsReference?: string): Promise<void>;
         fetchUseCases(): Promise<void>;
-        invite(phoneNumber: string): Promise<void>;
         /**
          * Generates a call invitation URL.
          * On iOS, the method will take into account the invitation ID passed as parameter.
-         * [invitationId Used on iOS to generate the invitation URL]
+         * [referenceId]
          * @type {[type]}
          */
-        generateURL(invitationId: string): Promise<string>;
+        generateURL(referenceId: string): Promise<{ url: string; callId: string; }>;
         /**
          * Revokes a call invitation by invitation ID
          * [invitationId Invitation ID]
@@ -61,6 +55,12 @@ declare module SightCall {
          */
         handleCallLocalNotification(payload: any): void;
     }
+    interface GuestReadyEvent {
+        callId: string;
+    }
+    interface CallStartEvent {
+        callId: string;
+    }
     interface StatusEvent {
         status: string;
     }
@@ -72,6 +72,7 @@ declare module SightCall {
     interface MediaEvent {
         filePath: string;
         size: number;
+        caseReportId: string;
     }
     /** iOS event */
     interface CallAcceptedEvent {

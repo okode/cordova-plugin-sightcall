@@ -1,12 +1,11 @@
 //
-//  LSCustomization.h
+//  LSCustomizationDelegate.h
 //  LSUniversalSDK
-//
-//  Created by Charles Thierry on 21/03/17.
-//  Copyright © 2017 SightCall. All rights reserved.
 //
 
 #import <LSUniversalSDK/LSUniversalSDK.h>
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  The customization delegate allows to change a few things in the LSUniversal callViewController's view.
@@ -91,3 +90,5 @@
 - (void)customizeStopShare:(UIButton *)b;
 
 @end
+
+NS_ASSUME_NONNULL_END

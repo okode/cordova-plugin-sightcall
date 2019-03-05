@@ -1,13 +1,10 @@
 package com.okode.cordova.sightcall.events;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.okode.cordova.sightcall.Constants;
-import com.sightcall.universal.Universal;
-import com.sightcall.universal.event.UniversalStatusEvent;
-import com.sightcall.universal.model.Configuration;
+
+import net.rtccloud.sdk.event.call.StatusEvent;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,13 +13,15 @@ import org.json.JSONObject;
  * Created by rpanadero on 21/7/17.
  */
 
-public class Status extends UniversalStatusEvent implements Event {
+public class Status implements Event {
 
     private static final String STATUS_EVENT_RECEIVED = "sightcall.statusevent";
     private static final String STATUS_PARAM = "status";
 
-    public Status(UniversalStatusEvent event) {
-        super(event.status(), event.configuration());
+    private StatusEvent event;
+
+    public Status(StatusEvent event) {
+        this.event = event;
     }
 
     @Override
@@ -34,7 +33,7 @@ public class Status extends UniversalStatusEvent implements Event {
     public JSONObject getEventData() {
         JSONObject data = new JSONObject();
         try {
-            data.putOpt(STATUS_PARAM, this.status().toString());
+            data.putOpt(STATUS_PARAM, this.event.status().toString());
         } catch (JSONException e) {
             Log.e(Constants.TAG, "Error constructing notification object. Message: " + e);
         }

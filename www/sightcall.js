@@ -24,13 +24,13 @@ SightCall.isAgentAvailable = function() {
     });
 };
 
-SightCall.registerAgent = function(token, pin) {
+SightCall.registerAgent = function(token, apnsReference) {
     return new Promise(function(resolve, reject) {
         exec(function() {
             resolve();
         }, function(error) {
             reject(error);
-        }, "SightCall", "registerAgent", [token, pin]);
+        }, "SightCall", "registerAgent", [token, apnsReference]);
     });
 };
 
@@ -44,30 +44,15 @@ SightCall.fetchUseCases = function() {
     });
 };
 
-SightCall.invite = function(phoneNumber) {
-    return new Promise(function(resolve, reject) {
-        exec(function() {
-            resolve();
-        }, function(error) {
-            reject(error);
-        }, "SightCall", "invite", [phoneNumber]);
-    });
-};
-
-SightCall.generateURL = function(invitationId) {
+SightCall.generateURL = function(referenceId) {
     return new Promise(function(resolve, reject) {
         exec(function(url) {
             resolve(url);
         }, function(error) {
             reject(error);
-        }, "SightCall", "generateCallURL", [invitationId]);
+        }, "SightCall", "generateCallURL", [referenceId]);
     });
 };
-
-SightCall.revokeInvitation = function(invitationId) {
-    exec(null, null, "SightCall", "revokeInvitation", [invitationId]);
-};
-
 
 SightCall.isGuestReadyPush = function(payload) {
     return payload != null && payload.extras != null && payload.extras.guest_ready != null;
