@@ -12,8 +12,6 @@
 
     <preference name="UNIVERSAL_FEATURE_DEEPLINK_URI" default="@string/universal_feature_deeplink_uri"/>
 
-    <hook type="after_prepare" src="hooks/after_prepare.js"/>
-
     <js-module src="www/sightcall.js" name="sightcall">
     	<clobbers target="window.sightcall" />
     </js-module>
@@ -65,29 +63,6 @@
         <config-file target="AndroidManifest.xml" parent="/*">
             <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
         </config-file>
-        <!--Google services-->
-        <config-file parent="/resources" target="res/values/strings.xml">
-            <string name="google_app_id">@string/google_app_id</string>
-        </config-file>
-        <config-file parent="/resources" target="res/values/strings.xml">
-            <string name="google_api_key">@string/google_api_key</string>
-        </config-file>
-        <config-file parent="/resources" target="res/values/strings.xml">
-            <string name="gcm_defaultSenderId">@string/gcm_defaultSenderId</string>
-        </config-file>
-        <config-file parent="/resources" target="res/values/strings.xml">
-            <string name="default_web_client_id">@string/default_web_client_id</string>
-        </config-file>
-        <config-file parent="/resources" target="res/values/strings.xml">
-            <string name="ga_trackingId">@string/ga_trackingId</string>
-        </config-file>
-        <config-file parent="/resources" target="res/values/strings.xml">
-            <string name="firebase_database_url">@string/firebase_database_url</string>
-        </config-file>
-        <config-file parent="/resources" target="res/values/strings.xml">
-            <string name="google_crash_reporting_api_key">@string/google_crash_reporting_api_key</string>
-        </config-file>
-        <!-- End Google services-->
         <!--Sight Call-->
         <config-file parent="/resources" target="res/values/strings.xml">
             <bool name="universal_feature_fcm">true</bool>
