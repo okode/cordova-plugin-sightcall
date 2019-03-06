@@ -20,6 +20,7 @@ import com.sightcall.universal.api.Environment;
 import com.sightcall.universal.event.CallReportEvent;
 import com.sightcall.universal.fcm.messages.GuestReady;
 import com.sightcall.universal.media.MediaSavedEvent;
+import com.sightcall.universal.model.Config;
 import com.sightcall.universal.model.Session;
 import com.sightcall.universal.scenario.Step;
 import com.sightcall.universal.scenario.steps.CallStep;
@@ -313,10 +314,14 @@ public class SightCall extends CordovaPlugin {
     }
 
     private String getCallId(Session session) {
-        if (session == null || session.config() == null || session.config().code() == null) {
+        if (session == null || session.config() == null) {
             return null;
         }
-        return session.config().code().value();
+        Config config = session.config();
+        if (session.config().code() != null) {
+            return session.config().code().value();
+        }
+        return config.pin();
     }
 }
 
