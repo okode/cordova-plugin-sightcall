@@ -26,6 +26,7 @@ NSString *const IDLE_STATUS = @"IDLE";
 NSString *const CONNECTING_STATUS = @"CONNECTING";
 NSString *const ACTIVE_STATUS = @"ACTIVE";
 NSString *const DISCONNECTING_STATUS = @"DISCONNECTING";
+NSString *const CONNECTION_LOST = @"CONNECTION_LOST";
 
 // UNIVERSAL END REASON
 NSString *const END_FOR_UNEXPECTED_ERROR = @"UNEXPECTED";
@@ -84,6 +85,10 @@ static CDVSightCall *instance;
                 [self.viewController dismissViewControllerAnimated:TRUE completion:nil];
             });
             statusData = DISCONNECTING_STATUS;
+            break;
+        }
+        case lsConnectionStatus_networkLoss: {
+            statusData = CONNECTION_LOST;
             break;
         }
         default: break;
