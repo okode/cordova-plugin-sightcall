@@ -262,12 +262,13 @@ static CDVSightCall *instance;
     if (plugin == NULL) { return; }
     NSDictionary* guestReadyPayload = userInfo != NULL ? userInfo[@"guest-ready"] : NULL;
     if ([plugin.lsUniversal canHandleNotification:userInfo] && guestReadyPayload != NULL) {
-        NSString *pinCode = NULL;
+        NSObject *pinCode = [NSNull null];
+        NSObject *caseReportId = [NSNull null];
         if (guestReadyPayload != NULL) {
             pinCode = guestReadyPayload[@"pincode"];
+            caseReportId = guestReadyPayload[@"case-report-id"];
         }
-        NSObject *callId = pinCode != NULL ? pinCode : [NSNull null];
-        [plugin notifyListener:GUEST_READY_EVENT_RECEIVED data:@{ @"callId": callId }];
+        [plugin notifyListener:GUEST_READY_EVENT_RECEIVED data:@{ @"callId": pinCode, @"caseReportId": caseReportId }];
         [plugin showLocalCallNotification:userInfo];
     }
 }
