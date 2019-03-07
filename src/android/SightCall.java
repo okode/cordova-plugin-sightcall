@@ -23,7 +23,8 @@ import com.sightcall.universal.media.MediaSavedEvent;
 import com.sightcall.universal.model.Config;
 import com.sightcall.universal.model.Session;
 import com.sightcall.universal.scenario.Step;
-import com.sightcall.universal.scenario.steps.CallStep;
+import com.sightcall.universal.scenario.steps.GuestPincodeCallStep;
+import com.sightcall.universal.scenario.steps.HostPincodeCallStep;
 
 import net.rtccloud.sdk.event.Event;
 import net.rtccloud.sdk.event.call.StatusEvent;
@@ -74,7 +75,7 @@ public class SightCall extends CordovaPlugin {
     @Event
     public void onGuestReady(GuestReady event) {
         Log.i(TAG, event.toString());
-        EventsManager.instance().sendGuestReadyEvent(event.pincode());
+        EventsManager.instance().sendGuestReadyEvent(event.pincode(), event.caseReportId());
     }
 
     @Event
@@ -98,11 +99,24 @@ public class SightCall extends CordovaPlugin {
     @Event
     public void onStepStateEvent(Step.StateEvent event) {
         Log.i(TAG, event.toString());
-        boolean isActive = Step.State.ACTIVE.equals(event.state());
-        if (event.step() instanceof CallStep && isActive) {
-            CallStep activeCallStep = (CallStep) event.step();
-            String callId = getCallId(activeCallStep.session());
-            EventsManager.instance().sendCallStartEvent(callId);
+        if (event.state() == Step.State.SUCCESS) {
+            final Step step = event.step();
+            if (step instanceof GuestPincodeCallStep) {
+                // On the Guest side
+                final GuestPincodeCallStep guestStep = (GuestPincodeCallStep) step;
+                final String pincode = guestStep.session().config().pin();
+                final String caseReportId = guestStep.session().caseReportId();
+                EventsManager.instance().sendCallStartEvent(pincode, caseReportId);
+            } else if (step instanceof HostPincodeCallStep) {
+                // On the agent side
+                final HostPincodeCallStep hostStep = (HostPincodeCallStep) step;
+                final GuestReady guestReady = hostStep.session().config().guestReady();
+                if (guestReady != null) {
+                    final String pincode = guestReady.pincode();
+                    final String caseReportId = guestReady.caseReportId();
+                    EventsManager.instance().sendCallStartEvent(pincode, caseReportId);
+                }
+            }
         }
     }
 

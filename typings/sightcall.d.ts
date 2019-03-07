@@ -57,9 +57,11 @@ declare module SightCall {
     }
     interface GuestReadyEvent {
         callId: string;
+        caseReportId: string;
     }
     interface CallStartEvent {
         callId: string;
+        caseReportId: string;
     }
     interface StatusEvent {
         status: string;
@@ -73,10 +75,6 @@ declare module SightCall {
         filePath: string;
         size: number;
         caseReportId: string;
-    }
-    /** iOS event */
-    interface CallAcceptedEvent {
-        callUrl: string;
     }
 }
 

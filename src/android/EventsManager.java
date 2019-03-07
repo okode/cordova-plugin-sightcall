@@ -32,12 +32,12 @@ public class EventsManager {
         return manager;
     }
 
-    public void sendGuestReadyEvent(String callId) {
-        this.notifyListener(new GuestReady(callId));
+    public void sendGuestReadyEvent(String callId, String caseReportId) {
+        this.notifyListener(new GuestReady(callId, caseReportId));
     }
 
-    public void sendCallStartEvent(String callId) {
-        this.notifyListener(new CallStart(callId));
+    public void sendCallStartEvent(String callId, String caseReportId) {
+        this.notifyListener(new CallStart(callId, caseReportId));
     }
 
     public void sendStatusEvent(StatusEvent event) {
