@@ -20,8 +20,6 @@ import com.sightcall.universal.api.Environment;
 import com.sightcall.universal.event.CallReportEvent;
 import com.sightcall.universal.fcm.messages.GuestReady;
 import com.sightcall.universal.media.MediaSavedEvent;
-import com.sightcall.universal.model.Config;
-import com.sightcall.universal.model.Session;
 import com.sightcall.universal.scenario.Step;
 import com.sightcall.universal.scenario.steps.GuestPincodeCallStep;
 import com.sightcall.universal.scenario.steps.HostPincodeCallStep;
@@ -99,7 +97,7 @@ public class SightCall extends CordovaPlugin {
     @Event
     public void onStepStateEvent(Step.StateEvent event) {
         Log.i(TAG, event.toString());
-        if (event.state() == Step.State.SUCCESS) {
+        if (event.state() == Step.State.ACTIVE) {
             final Step step = event.step();
             if (step instanceof GuestPincodeCallStep) {
                 // On the Guest side
@@ -327,16 +325,6 @@ public class SightCall extends CordovaPlugin {
         Universal.start(url);
     }
 
-    private String getCallId(Session session) {
-        if (session == null || session.config() == null) {
-            return null;
-        }
-        Config config = session.config();
-        if (session.config().code() != null) {
-            return session.config().code().value();
-        }
-        return config.pin();
-    }
 }
 
 final class Methods {

@@ -4,7 +4,7 @@
 #import <LSUniversalSDK/LSUniversalSDK.h>
 #import "CallLocalNotification.h"
 
-@interface CDVSightCall : CDVPlugin<LSUniversalDelegate, LSPictureProtocol, UNUserNotificationCenterDelegate>
+@interface CDVSightCall : CDVPlugin<LSUniversalDelegate, LSPictureProtocol, UNUserNotificationCenterDelegate, LSUniversalLogDelegate>
 
 #if !(TARGET_OS_SIMULATOR)
 @property (strong, nonatomic) LSUniversal* lsUniversal;
@@ -13,6 +13,7 @@
 
 - (void)registerListener:(CDVInvokedUrlCommand *)command;
 - (void)demo:(CDVInvokedUrlCommand*)command;
+- (void)enableLogger:(CDVInvokedUrlCommand*)command;
 - (void)setEnvironment:(CDVInvokedUrlCommand*)command;
 - (void)isAgentAvailable:(CDVInvokedUrlCommand*)command;
 - (void)registerAgent:(CDVInvokedUrlCommand*)command;

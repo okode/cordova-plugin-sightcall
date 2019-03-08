@@ -70,7 +70,6 @@ SightCall.startCall = function(url) {
     exec(null, null, "SightCall", "startCall", [url]);
 };
 
-
 SightCall.bindDocumentEvent = function() {
     exec(function(e) {
       console.log("Firing document event: " + e.eventType + " with data " + JSON.stringify(e.eventData));

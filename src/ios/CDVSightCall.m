@@ -38,20 +38,26 @@ NSString *const END_REMOTE = @"REMOTE";
 @synthesize ignoreUsecaseConfiguration;
 
 static CDVSightCall *instance;
+BOOL isLoggerEnabled = FALSE;
 
 #pragma mark - Plugin Initialization
 
 - (void)pluginInitialize
 {
-    self.lsUniversal = [[LSUniversal alloc] init];
+    [self initSightcall];
     instance = self;
     self.ignoreUsecaseConfiguration = TRUE;
 }
 
-- (void)registerListener:(CDVInvokedUrlCommand *)command {
-    self.listenerCallbackID = command.callbackId;
+- (void)initSightcall {
+    self.lsUniversal = [[LSUniversal alloc] init];
     self.lsUniversal.delegate = self;
     [self.lsUniversal setPictureDelegate: self];
+    self.lsUniversal.logDelegate = self;
+}
+
+- (void)registerListener:(CDVInvokedUrlCommand *)command {
+    self.listenerCallbackID = command.callbackId;
 }
 
 #pragma mark - LSUniversalDelegate
@@ -162,10 +168,18 @@ static CDVSightCall *instance;
     NSLog(@"SightCall: demo function invoked");
 }
 
+- (void)enableLogger:(CDVInvokedUrlCommand *)command
+{
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args, CordovaCompletionHandler completionHandler) {
+        isLoggerEnabled = [args objectAtIndex:0];
+    }];
+}
+
 - (void)setEnvironment:(CDVInvokedUrlCommand *)command {
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, CordovaCompletionHandler completionHandler) {
         NSString *env = [[args objectAtIndex:0] lowercaseString];
         [[NSUserDefaults standardUserDefaults] setObject:env forKey:@"kStorePlatform"];
+        [self initSightcall];
     }];
 }
 
@@ -512,6 +526,19 @@ static CDVSightCall *instance;
     }];
 }
 
+#pragma mark Logger
+
+//this delegate method is called when a log line is emitted by the SDK
+- (void)logLevel:(NSInteger)level logModule:(NSInteger)module fromMethod:(NSString *)originalSel message:(NSString *)message, ...;
+{
+    if (isLoggerEnabled) {
+        va_list pe;
+        va_start(pe, message);
+        NSString *sMessage = [[NSString alloc] initWithFormat:message arguments:pe];
+        va_end(pe);
+        NSLog(@"%@ %@", originalSel, sMessage);
+    }
+}
 
 @end
 #endif

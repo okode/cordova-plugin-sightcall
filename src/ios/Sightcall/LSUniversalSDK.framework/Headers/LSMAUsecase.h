@@ -8,7 +8,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-
 @protocol LSMAUsecase <NSObject>
 
 @property (nonatomic, readonly, nullable) NSString *name;
