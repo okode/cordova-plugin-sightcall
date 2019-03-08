@@ -1,11 +1,6 @@
 declare module SightCall {
     interface SightCallPlugin {
         demo(): void;
-        /**
-         * It enables SDK logger for debug purpose.
-         * Only available on Android.
-         * @param enabled
-         */
         enableLogger(enabled: boolean): void;
         setEnvironment(environmentKey: string): void;
         isAgentAvailable(): Promise<void>;
@@ -18,12 +13,6 @@ declare module SightCall {
          * @type {[type]}
          */
         generateURL(referenceId: string): Promise<{ url: string; callId: string; }>;
-        /**
-         * Revokes a call invitation by invitation ID
-         * [invitationId Invitation ID]
-         * @type {[type]}
-         */
-        revokeInvitation(invitationId: string): void;
         /**
          * The method checks if the payload belongs to Sight Call and
          * if it has been received because the guest is ready to start the call.
@@ -46,14 +35,6 @@ declare module SightCall {
          */
         handleCallLocalNotification(payload: any): void;
         startCall(url: string): void;
-        /**
-         * This method handles the local notification displayed due to an entry call
-         * and generates an event (only generated on iOS) to notice that the call has been accepted.
-         * This method should be invoked after invoking 'isCallLocalNotification'
-         * Only available on iOS.
-         * @param payload Push payload
-         */
-        handleCallLocalNotification(payload: any): void;
     }
     interface GuestReadyEvent {
         callId: string;
