@@ -23,18 +23,27 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, nullable, readonly) NSObject <LSConsentDescription> *consent;
 
-
+/**
+ * Clean up the agent's information on this device and notify the backend that the agent is unregistered on this device.
+ * Cancels any pending registration waiting for APN token.
+ */
 - (void)clearCredentials;
 
 /**
- *  Register with the provided data.
- *  The register needs a device/app APN token. If no notification token is set at the time of registration, the block is fired with NO.
+ * Register with the provided data.
  *
- *  While registering, the Mobile Agent Handler triggers the LSUniversal's delegate `connectionEvent:` with `lsConnectionStatus_agent...` parameters.
+ * A device/app APN token is needed to register. If self.notificationToken is not set at this point, returns without firing registrationBlock.
+ * Registration will resume once it is set. To cancel that pending registration, call [self clearCredentials].
  *
- *  @param code                 The pin code used to register.
- *  @param referenceID          The reference used to identify the App. Set in the admin portal. Registering succesfully will override the self.notificationReference with this value.
- *  @param registrationBlock    This block is fired on registration success or failure.
+ * While registering, the Mobile Agent Handler triggers the LSUniversal's delegate `connectionEvent:` with `lsConnectionStatus_agent...` parameters.
+ *
+ * @param code                 The pin code used to register.
+ * @param referenceID          The reference used to identify the App. Set in the admin portal. Registering succesfully will override the self.notificationReference with this value. If not set, uses the self.notificationReference.
+ * @param registrationBlock    This block is fired on registration success or failure.
+ * @sa LSMARegistrationStatus_t
+ * @sa registrationBlock
+ * @sa clearCredentials
+ * @sa registerWithURL:andReference:onSignIn:
  */
 - (void)registerWithCode:(nonnull NSString *)code
             andReference:(nonnull NSString *)referenceID
@@ -43,14 +52,19 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Register an agent with an URL provided to the App.
- * The APN token must be set before calling this method.
+ *
+ * The APN token must be set before calling this method. If self.notificationToken is not set at this point, returns without firing registrationBlock.
+ * Registration will resume once it is set. To cancel that pending registration, call [self clearCredentials].
  * @param url                   The URL received. The URL is formatted as ://<host>/register/<pincode>
  * @param referenceID           The reference used to identify the App. Set in the admin portal. Registering succesfully will override the self.notificationReference with this value.
  * @param registrationBlock     This block is fired on registration success or failure.
+ * @sa LSMARegistrationStatus_t
+ * @sa registrationBlock
+ * @sa registerWithCode:andReference:onSignIn:
  */
 - (void)registerWithURL:(nonnull NSString *)url
-            andReference:(nonnull NSString *)referenceID
-                onSignIn:(nullable registrationBlock)registrationBlock;
+           andReference:(nonnull NSString *)referenceID
+               onSignIn:(nullable registrationBlock)registrationBlock;
 
 
 /**

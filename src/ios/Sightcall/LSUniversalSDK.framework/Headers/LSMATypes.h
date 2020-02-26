@@ -29,13 +29,34 @@ typedef NS_ENUM(NSUInteger, LSMATemporaryTokenStatus_t)
     LSMATemporaryTokenStatus_Error
 };
 
+/**
+ * Information sent through the registration block when attempting registration
+ */
 typedef NS_ENUM(NSUInteger, LSMARegistrationStatus_t)
 {
+    /**
+     * Registration took place correctly
+     */
     LSMARegistrationStatus_registered,
+    /**
+     * An unspecified error occured
+     */
     LSMARegistrationStatus_notSpecified,
+    /**
+     * An error occured on the connection to the back while attempting registration
+     */
     LSMARegistrationStatus_backError,
+    /**
+     * The temporary token used to attempt registration is invalid or expired
+     */
     LSMARegistrationStatus_invalidTemporaryToken,
+    /**
+     * The notification reference is missing
+     */
     LSMARegistrationStatus_missingReference,
+    /**
+     * The APNs token was not set before registration
+     */
     LSMARegistrationStatus_missingAPNToken
 } ;
 
@@ -79,21 +100,23 @@ typedef NS_ENUM(NSUInteger, LSMATestNotification_t)
 
 /**
  *  The registration block that is fired by registerWith...:andReference:onSignIn:
+ * If the registration correctly took place, tokenID is the permanent identification token and t is LSMARegistrationStatus_registered.
+ * Otherwise tokenID is nil and t is a description of the error that occured.
  */
 typedef void (^registrationBlock)(LSMARegistrationStatus_t t, NSString *_Nullable tokenID);
 
 /**
  *  The block that is called once the usecases are fetched.
  *
- *  @param statusCode    The HTTP Status code for the request
- *  @param usecases        The Array that contains the usecases
+ *  @param statusCode    The HTTP Status code for the request (2XX for success, failure otherwise)
+ *  @param usecases      The Array that contains the usecases
  */
 typedef void (^usecasesBlock)(NSInteger statusCode, NSArray *_Nullable usecases);
 
 /**
  *  The block that is called once the usecases are fetched.
  *
- *  @param statusCode    The HTTP Status code for the request
+ *  @param statusCode    The HTTP Status code for the request (2XX for success, failure otherwise)
  */
 typedef void (^notificationBlock)(NSInteger statusCode);
 
