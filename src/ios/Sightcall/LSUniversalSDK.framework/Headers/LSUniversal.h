@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 
  You can call abort during connection or during a call. It will either directly disconnect the LSUniversalSDK or hangup the call, which will in turn disconnect the LSUniversalSDK. On your end, calls can be ended either trough this abort method or the hangup button in the call view UI. You are notified of call ends by the [LSUniversalDelegate callReport:].
  
- Upon init, the self.mobile2mobile instance is initialized and attemps to sign in if agent credentials are available.
+ Upon init, the agent Handler instance is initialized and attemps to sign in if agent credentials are available.
  
  */
 @interface LSUniversal : NSObject
@@ -32,22 +32,35 @@ NS_ASSUME_NONNULL_BEGIN
  *  @sa [LSUniversalDelegate connectionEvent:]
  *  @sa [LSUniversalDelegate callReport:]
  */
-@property(nonatomic, readonly) UIViewController *callViewController;
+@property(nonatomic, readonly, nullable) UIViewController *callViewController;
 
 /**
  *  The delegate that is notified of connection events and call ends.
  */
-@property(nonatomic, weak) id<LSUniversalDelegate> delegate;
+@property(nonatomic, weak, nullable) id<LSUniversalDelegate> delegate;
 
 /**
  *  If the delegate conforms to LSUniversalLogDelegate, this property is set automatically
  */
-@property(nonatomic, weak) id<LSUniversalLogDelegate> logDelegate;
+@property(nonatomic, weak, nullable) id<LSUniversalLogDelegate> logDelegate;
 
 /**
  *  This delegate is called upon when the call menu is resized.
  */
-@property(nonatomic, weak) NSObject<LSCustomizationDelegate> *customizationDelegate;
+@property(nonatomic, weak, nullable) NSObject<LSCustomizationDelegate> *customizationDelegate __attribute__((deprecated("Please use the localBarCustomizationDelegate.")));
+
+/**
+ * The customization delegate for the local bar.
+ * The local bar controls the call from the user's end.
+ */
+@property(nonatomic, weak, nullable) NSObject<LSLocalCustomizationDelegate> *localBarCustomizationDelegate;
+
+/**
+ * The customization delegate for the remote bar.
+ * The remote bar is only available when the user is an agent.
+ */
+@property(nonatomic, weak, nullable) NSObject<LSRemoteCustomizationDelegate> *remoteBarCustomizationDelegate;
+
 
 /**
  *  The current connection status. When the connection goes from connecting to active, the call is created.
@@ -58,15 +71,17 @@ NS_ASSUME_NONNULL_BEGIN
  *  This object is responsible for sending the notifications to a remote contact (e.g. in the Agent-to-Guest case). It needs the Apple Notification token to work (see APNS).
  *  This object is available after the init is done, until destruction of the LSUniversal instance.
  */
-@property(nonatomic, readonly) NSObject<LSMAHandler, LSMAHandlerPincode, LSMAHandlerRegister> *agentHandler;
+@property(nonatomic, readonly, nullable) NSObject<LSMAHandler, LSMAHandlerPincode, LSMAHandlerRegister> *agentHandler;
 
 
 /**
  *  The picture upload delegate is notified when uploading is started, stopped and when a picture is uploading, along with some information regarding the picture being uploaded.
  */
-@property(nonatomic, weak) NSObject <LSPictureProtocol> *pictureDelegate;
+@property(nonatomic, weak, nullable) NSObject <LSPictureProtocol> *pictureDelegate;
 
+@end
 
+@interface LSUniversal (Start)
 /**
  *  Connects the LSUniversalSDK to SightCall's cloud. The dictionary is a <String *: String *> dictionary, with the key being URL Scheme parameters and the values their value.
  *
@@ -94,6 +109,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)abort;
 
+@end
+
+@interface LSUniversal (Notifications)
+
 /**
  *  Checks if a PushKit notification received by the application can be dealt with by the SDK
  *  @param notification The notification's payload dictionary.
@@ -111,7 +130,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)handleNotification:(NSDictionary *)notification;
 
 @end
-
 
 NS_ASSUME_NONNULL_END
 
