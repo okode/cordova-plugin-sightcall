@@ -3,6 +3,8 @@ Cordova Plugin SightCall
 
 Cordova Plugin for SightCall.
 
+**Important**: This plugin only works on Cordova projects that are using Android with AndroidX. So, if you don't want to have dependency with AndroidX in your Android project for some reason, please use a plugin version earlier than 4.0.
+
 ##	 Installation
 
 - Add this to config.xml
@@ -47,3 +49,13 @@ Cordova Plugin for SightCall.
             </service>
         </custom-config-file>
     ```
+
+## Troubleshooting guide
+
+Q: I get compilation errors on Android
+
+A: First, check if your project compiles without this plugin. In that case, verify the plugin version you are using on your project because since 4.0 version we just support Cordova projects that are using Android with AndroidX. Below 4.0 version, take into account that this plugin is not compatible with AndroidX as it uses old Android Support Libraries. In that case, to migrate the plugin code to AndroidX, you can do the following:
+
+- Add plugin to enable AndroidX in the project (`cordova plugin add cordova-plugin-androidx`) and add plugin to patch existing plugin source that uses the Android Support Library to use AndroidX (`cordova plugin add cordova-plugin-androidx-adapter`)
+
+- Or using Jetifier if you are using this plugin on a Capacitor project: https://github.com/mikehardy/jetifier
