@@ -59,3 +59,12 @@ A: First, check if your project compiles without this plugin. In that case, veri
 - Add plugin to enable AndroidX in the project (`cordova plugin add cordova-plugin-androidx`) and add plugin to patch existing plugin source that uses the Android Support Library to use AndroidX (`cordova plugin add cordova-plugin-androidx-adapter`)
 
 - Or using Jetifier if you are using this plugin on a Capacitor project: https://github.com/mikehardy/jetifier
+
+
+Q: I get Android compilation errors when linking resources in the manifest file like:
+```
+error: attribute android:requestLegacyExternalStorage not found.
+error: attribute android:foregroundServiceType not found.
+```
+
+A: You need to compile against SDK 29 and maybe use the most recent build tools for aapt to know this attribute, because it's introduced in Android 10.
