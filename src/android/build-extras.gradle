@@ -17,12 +17,12 @@ android {
 
 repositories {
     maven {
-      url 'https://s3.amazonaws.com/sightcall.maven.release'
+      url 'https://sightcall-maven.s3.amazonaws.com'
     }
 }
 
 dependencies {
-    implementation 'com.sightcall.universal:universal-sdk:4.3.0-mapfre-support'
+    implementation 'com.sightcall.universal:universal-sdk:4.3.0'
 }
 
 cdvPluginPostBuildExtras.push({
