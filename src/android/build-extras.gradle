@@ -1,9 +1,10 @@
 buildscript {
     repositories {
+        google()
         jcenter()
     }
     dependencies {
-        classpath 'com.google.gms:google-services:4.0.1'
+        classpath 'com.google.gms:google-services:4.3.3'
     }
 }
 
@@ -35,7 +36,7 @@ cdvPluginPostBuildExtras.push({
             }
         }
         if (!hasGoogleServicesPlugin) {
-            apply plugin: com.google.gms.googleservices.GoogleServicesPlugin
+            apply plugin: 'com.google.gms.google-services'
         }
     }
 })
