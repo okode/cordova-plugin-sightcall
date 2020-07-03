@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-sightcall",
-  "version": "4.0.2",
+  "version": "4.0.3",
   "description": "Cordova SightCall Plugin",
   "cordova": {
     "id": "cordova-plugin-sightcall",
