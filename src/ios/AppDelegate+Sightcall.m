@@ -55,11 +55,16 @@
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     
     NSLog(@"Sightcall - Notifications device token received: %@", deviceToken);
-    NSString * deviceTokenString = [[[[deviceToken description]
-                                      stringByReplacingOccurrencesOfString: @"<" withString: @""]
-                                     stringByReplacingOccurrencesOfString: @">" withString: @""]
-                                    stringByReplacingOccurrencesOfString: @" " withString: @""];
-    [CDVSightCall setNotificationDeviceToken:deviceTokenString];
+    NSUInteger length = deviceToken.length;
+    if (length == 0) {
+        return;
+    }
+    const unsigned char *buffer = deviceToken.bytes;
+    NSMutableString *hexString  = [NSMutableString stringWithCapacity:(length * 2)];
+    for (int i = 0; i < length; ++i) {
+        [hexString appendFormat:@"%02x", buffer[i]];
+    }
+    [CDVSightCall setNotificationDeviceToken:[hexString copy]];
 }
 
 
