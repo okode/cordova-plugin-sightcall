@@ -11,6 +11,8 @@
 #endif
 @property (nonatomic, copy) NSString *listenerCallbackID;
 
+@property NSString *apnsToken;
+
 - (void)registerListener:(CDVInvokedUrlCommand *)command;
 - (void)demo:(CDVInvokedUrlCommand*)command;
 - (void)enableLogger:(CDVInvokedUrlCommand*)command;

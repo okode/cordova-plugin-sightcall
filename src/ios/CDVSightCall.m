@@ -51,6 +51,9 @@ BOOL isLoggerEnabled = FALSE;
 
 - (void)initSightcall {
     self.lsUniversal = [[LSUniversal alloc] init];
+    if (self.apnsToken) {
+        [self.lsUniversal.agentHandler setNotificationToken: self.apnsToken];
+    }
     self.lsUniversal.delegate = self;
     [self.lsUniversal setPictureDelegate: self];
     self.lsUniversal.logDelegate = self;
@@ -268,6 +271,8 @@ BOOL isLoggerEnabled = FALSE;
 + (void)setNotificationDeviceToken:(NSString *)token {
     CDVSightCall *plugin = instance;
     if (plugin == NULL) { return; }
+    NSLog(@"Calling setNotificationToken with notification token: %@", token);
+    plugin.apnsToken = token;
     [plugin.lsUniversal.agentHandler setNotificationToken: token];
 }
 
