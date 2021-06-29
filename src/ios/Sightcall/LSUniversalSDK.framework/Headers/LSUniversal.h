@@ -4,6 +4,10 @@
 //
 
 #import <LSUniversalSDK/LSUniversalSDK.h>
+#import <LSUniversalSDK/OfflineIncludedIdentity.h>
+#import <LSUniversalSDK/LiveOCR.h>
+#import <LSUniversalSDK/LSCustomizationDelegate.h>
+#import <LSUniversalSDK/LSPictureProtocol.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -103,11 +107,23 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)startWithString:(NSString *)param;
 
 /**
+ *  Connects the LSUniversalSDK to SightCall's cloud.
+ *
+ *  @param param The string used to create the dictionary. It can be an URL string such as the one used in the Universal App (i.e. "sightcall://?mode=value&..."), or simply "mode=value&...". `?`, `=` and `&` are used as separators.
+ *  @param wss YES if the sdk should connect with websocket secure. Websocket secure is much slower but works with AppClips
+ *
+ *  @sa startWithString:
+ */
+- (void)startWithString:(NSString *)param useWebSocketSecure:(BOOL)wss;
+
+/**
  *  Disconnects the LSUniversalSDK from the cloud. Hangup the call if any.
  *  @sa startWithString:
  *  @sa startWithDictionary:
  */
 - (void)abort;
+
+-(void) uploadUHDInBackground;
 
 @end
 
@@ -128,6 +144,35 @@ NS_ASSUME_NONNULL_BEGIN
  *  @sa canHandleNotification:
  */
 - (void)handleNotification:(NSDictionary *)notification;
+
+@end
+
+
+@interface LSUniversal (OCR)
+
+/**
+ */
+- (UIViewController*)getLiveOCRVC;
+
+
+/**
+ */
+- (UIViewController*)getOCRTeacherVC;
+
+
+/**
+ */
+- (UIViewController *)getOfflineUseCaseVC;
+
+/**
+ */
+- (UIViewController *)getARLiveCodeVC;
+
+- (UIViewController *) getSingleUploadOfflineVC:(OfflineIncludedIdentity *) offlineMedia;
+
+- (UIViewController *) getSingleUploadOfflineVC:(OfflineIncludedIdentity *) offlineMedia withReference:(nullable NSString*)reference objectId:(nullable NSString*)objectId;
+
+-(void) goToLiveOCR:(LiveOCR *) liveOCRModel completion:(void(^)(UIViewController *viewController))block;
 
 @end
 

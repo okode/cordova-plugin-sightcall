@@ -4,9 +4,11 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "LSMATypes.h"
+#import <LSUniversalSDK/LSMATypes.h>
 
 NS_ASSUME_NONNULL_BEGIN
+
+@class LSAgentPollInfos;
 
 @protocol LSMAUsecase <NSObject>
 
@@ -20,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface LSMAGuestUsecase: NSObject <LSMAUsecase>
 
-- (nullable instancetype)init NS_UNAVAILABLE;
+- (instancetype)init NS_UNAVAILABLE;
 
 /** Which modes are available (at least Call) */
 @property (nonatomic, readonly) LSMAUsecaseMode_t availableModes;
@@ -39,6 +41,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 /** Is a reference needed to create a pincode */
 @property (nonatomic, readonly) BOOL needReference;
+
+/** Agent Poll */
+@property (nonatomic, readonly) LSAgentPollInfos *agentPoll;
 
 @end
 

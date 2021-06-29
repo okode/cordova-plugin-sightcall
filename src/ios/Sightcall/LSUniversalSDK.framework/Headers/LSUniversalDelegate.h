@@ -5,9 +5,11 @@
 
 
 #import <LSUniversalSDK/LSUniversalSDK.h>
-#import "LSConsentDescription.h"
+#import <LSUniversalSDK/LSConsentDescription.h>
 
 NS_ASSUME_NONNULL_BEGIN
+
+@class LSNotification, LSDeeplinkCommand;
 
 @protocol LSUniversalLogDelegate <NSObject>
 
@@ -39,7 +41,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @param callEnd The reason the call ended.
  */
-- (void)callReport:(lsCallReport_s)callEnd;
+- (void)callReport:(LSCallReport*)callEnd;
 
 @optional
 
@@ -47,7 +49,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  Called with information about the ACD queue.
  *  @param update The ACD queue information
  */
-- (void)acdStatusUpdate:(LSACDQueue_s)update;
+- (void)acdStatusUpdate:(LSACDQueue*)update;
 
 /**
  *  The user was accepted by an agent using the ACD system. The call begins soon after (i.e. connectionEvent: will soon be called with lsConnectionStatus_calling). This method may not be called.
@@ -63,6 +65,13 @@ NS_ASSUME_NONNULL_BEGIN
  *  @param infos The informations needed to open the survey page and optionaly open a popup to prompt the user before that.
  */
 - (void)callSurvey:(id<LSSurveyInfos>)infos;
+
+/**
+ *  Should this method be called, it will be at the end of a call. It contains all informations needed to open the agent poll popup defined in the administration portal.
+ *
+ *  @param pollInfos The informations needed to show the agent poll popup
+ */
+- (void)callAgentPoll:(UIAlertController *)agentPollAlert;
 
 //MARK: Mobile to Mobile
 
@@ -85,6 +94,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)agentAcceptedCall:(nullable NSString *)callURL userResponse:(nullable void(^)(BOOL))userResponse;
 
 /**
+ *  The incoming call did timeout for the agent. The app should dismiss any popup that shows the current incoming call.
+ */
+- (void)agentIncomingCallDidTimeout;
+
+/**
  *  The display consent must be displayed by the app.
  *  Consent is either guest consent before a call, or agent consent during a fetchIdentity.
  *  Consent must be agreed to for a call to start or for an agent to properly connect.
@@ -95,7 +109,23 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The registered agent received a push notification.
  */
-- (void)testNotificationReceivedTitle:(nullable NSString *)title andBody:(nullable NSString *)body;
+- (void)notificationReceived:(LSNotification *)notification;
+
+/**
+ * The SDK did detect a feature request and inform the app to react correctly
+ */
+- (void)featureCommand:(LSDeeplinkCommand *)feature;
+
+/**
+ * The registration did fail with the given status
+ */
+- (void)registrationFailureWithStatus:(LSMARegistrationStatus_t)status;
+
+/**
+ * show Display Name alert
+ */
+
+- (void)showDisplayNameAlert:(nullable UIAlertController *)alertController;
 
 @end
 

@@ -37,7 +37,7 @@ typedef NS_ENUM(NSInteger, LSQoSEvaluationScore_t)
 	LSQoSEvaluationScore_notApplicable,
 	LSQoSEvaluationScore_bad,
 	LSQoSEvaluationScore_medium,
-	LSQoSEvaluationScore_good,
+	LSQoSEvaluationScore_good
 };
 
 

@@ -3,9 +3,9 @@
 //  LSUniversalSDK
 //
 
-#import "LSMAHandlerProtocol.h"
-#import "LSMAAgentIdentity.h"
-#import "LSConsentDescription.h"
+#import <LSUniversalSDK/LSMAHandlerProtocol.h>
+#import <LSUniversalSDK/LSMAAgentIdentity.h>
+#import <LSUniversalSDK/LSConsentDescription.h>
 
 
 typedef NS_ENUM(NSUInteger, LSMAWorldRegion_t) {

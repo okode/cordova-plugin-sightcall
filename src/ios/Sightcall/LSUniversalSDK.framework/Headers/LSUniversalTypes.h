@@ -3,8 +3,6 @@
 //  LSUniversalSDK
 //
 
-#import <LSUniversalSDK/LSUniversalSDK.h>
-
 NS_ASSUME_NONNULL_BEGIN
 
 /** @name Connection parameters ID keys.*/
@@ -116,38 +114,34 @@ typedef NS_ENUM(NSInteger, lsCallEnd_t) {
     /**
      *
      */
-    lsCallEnd_eulaRefused
+    lsCallEnd_eulaRefused,
+    /**
+     * The call did timeout
+     */
+    lsCallEnd_timeout
 } ;
 
 /**
- * This structure describes the condition of the call end
+ * Describes the condition of the call end
  */
-typedef struct {
-    /**
-     * Reason the call ended
-     */
-	lsCallEnd_t callEnd;
-    /**
-     * Duration of the call
-     */
-	NSTimeInterval callLength;
-} lsCallReport_s;
-
-
+@interface LSCallReport : NSObject
 /**
- * ACD Queue status.
+ * Reason the call ended
  */
-typedef struct {
-	/**
-	 * Position in the queue.
-	 */
-	NSInteger position;
-	/**
-	 * Total length of the queue.
-	 */
-	NSInteger length;
-} LSACDProgress_s;
+@property (nonatomic) lsCallEnd_t callEnd;
+/**
+ * Duration of the call
+ */
+@property (nonatomic) NSTimeInterval callLength;
+/**
+ * Any URL to be redirected, or nil for no redirection
+ */
+@property (nonatomic, strong, nullable) NSURL *redirectURL;
 
+- (instancetype)initWithReason:(lsCallEnd_t)reason callLength:(NSTimeInterval)callLength;
+- (instancetype)initWithReason:(lsCallEnd_t)reason callLength:(NSTimeInterval)callLength redirectURL:(NSURL* _Nullable)url;
+
+@end
 
 /**
  * ACD Status.
@@ -174,24 +168,44 @@ typedef NS_ENUM(NSInteger, LSACDStatus_t) {
 	acdStatus_agentUnavailable
 } ;
 
+/**
+ * ACD Queue status.
+ */
+@interface LSACDProgress: NSObject
+/**
+ * Position in the queue.
+ */
+@property (nonatomic) NSInteger position;
+/**
+ * Total length of the queue.
+ */
+@property (nonatomic) NSInteger length;
+
+- (instancetype)init;
+- (instancetype)initWithPosition:(NSInteger)position length:(NSInteger)length;
+
+@end
+
 
 /**
  * The ACD status structure. `status` and `progress` are independant: there can be an ETA without any information about the queue, and you can be in a queue without any information about an ETA.
  */
-typedef struct {
-	/**
-	 * Current status of your ACD request.
-	 */
-	LSACDStatus_t status;
-	/**
-	 * Current info about your position in the queue.
-	 */
-	LSACDProgress_s progress;
-	/**
-	 * ETA for an agent to accept your call.
-	 */
-	NSInteger waitingTime;
-} LSACDQueue_s;
+@interface LSACDQueue: NSObject
+/**
+ * Current status of your ACD request.
+ */
+@property (nonatomic) LSACDStatus_t status;
+/**
+ * Current info about your position in the queue.
+ */
+@property (nonatomic, strong) LSACDProgress* progress;
+/**
+ * ETA for an agent to accept your call.
+ */
+@property (nonatomic) NSInteger waitingTime;
 
+- (instancetype)initWithStatus:(LSACDStatus_t)status progress:(LSACDProgress*)progress waitingTime:(NSInteger)waitingTime;
+
+@end
 
 NS_ASSUME_NONNULL_END

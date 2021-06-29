@@ -4,8 +4,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "LSMAUsecase.h"
-#import "LSMATypes.h"
+#import <LSUniversalSDK/LSMAUsecase.h>
+#import <LSUniversalSDK/LSMATypes.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -40,6 +40,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, nullable) NSString *notificationReference;
 
+
+@property (nonatomic, strong) void(^backgroundTransferCompletionHandler)(void);
 
 
 /**
