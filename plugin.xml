@@ -42,7 +42,14 @@
         <source-file src="src/ios/AppDelegate+Sightcall.m" />
 
         <!--SightCall framework-->
-        <framework src="src/ios/Sightcall/LSUniversalSDK.framework" custom="true" embed="true" />
+        <podspec>
+            <config>
+                <source url="https://cdn.cocoapods.org/"/>
+            </config>
+            <pods use-frameworks="true">
+                <pod name="LSUniversalSDK" git="https://github.com/sightcall/iOS-UniversalSDK.git" tag="2.4.3.0"/>
+            </pods>
+        </podspec>
 
     </platform>
 
