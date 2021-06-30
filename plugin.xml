@@ -47,7 +47,7 @@
                 <source url="https://cdn.cocoapods.org/"/>
             </config>
             <pods use-frameworks="true">
-                <pod name="LSUniversalSDK" git="https://github.com/sightcall/iOS-UniversalSDK.git" tag="2.4.3.0"/>
+                <pod name="LSUniversalSDK" git="https://github.com/sightcall/iOS-UniversalSDK.git" tag="2.4.2.0"/>
             </pods>
         </podspec>
 
