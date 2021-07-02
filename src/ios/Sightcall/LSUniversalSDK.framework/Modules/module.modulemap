@@ -1,6 +1,0 @@
-framework module LSUniversalSDK {
-  umbrella header "LSUniversalSDK.h"
-
-  export *
-  module * { export * }
-}

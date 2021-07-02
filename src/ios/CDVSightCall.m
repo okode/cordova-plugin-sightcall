@@ -113,7 +113,7 @@ BOOL isLoggerEnabled = FALSE;
 }
 
 
-- (void)callReport:(lsCallReport_s)callEnd
+- (void)callReport:(LSCallReport*)callEnd
 {
     NSString *callEndReason = NULL;
     switch (callEnd.callEnd) {
@@ -333,12 +333,12 @@ BOOL isLoggerEnabled = FALSE;
  **/
 - (void)savePictoreOnDisk:(UIImage *_Nullable)image with:(int32_t)caseId {
     NSData *imageData = UIImagePNGRepresentation(image);
-    
+
     NSString* tempDirectoryPath = NSTemporaryDirectory();
-    
+
     long long now = (long long)([[NSDate date] timeIntervalSince1970] * 1000.0);
     NSString *imagePath =[tempDirectoryPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%lld.png", now]];
-    
+
     NSLog(@"pre writing to file");
     if (![imageData writeToFile:imagePath atomically:NO])
     {
@@ -371,7 +371,7 @@ BOOL isLoggerEnabled = FALSE;
     if (SYSTEM_VERSION_GRATERTHAN_OR_EQUALTO(@"10.0")) {
         UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
         UNMutableNotificationContent* content = [CallLocalNotification buildCallNotificationContent: sightcallPushPayload];
-        
+
         UNTimeIntervalNotificationTrigger *trigger = [UNTimeIntervalNotificationTrigger triggerWithTimeInterval:1 repeats:false];
         UNNotificationRequest* request = [UNNotificationRequest
                                           requestWithIdentifier:@"SIGHTCALL_CALL_ALARM" content:content trigger:trigger];
@@ -414,14 +414,14 @@ BOOL isLoggerEnabled = FALSE;
         NSLog(@"Listener callback unavailable.  event %@", eventType);
         return NO;
     }
-    
+
     NSMutableDictionary *message = [NSMutableDictionary dictionary];
     [message setValue:eventType forKey:EVENT_TYPE];
     [message setValue:data forKey:EVENT_DATA];
-    
+
     CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:message];
     [result setKeepCallbackAsBool:YES];
-    
+
     [self.commandDelegate sendPluginResult:result callbackId:self.listenerCallbackID];
     return YES;
 }
@@ -467,13 +467,13 @@ BOOL isLoggerEnabled = FALSE;
      NSNull --> no return value
      nil -> no return value
      */
-    
+
     // String
     if ([value isKindOfClass:[NSString class]]) {
         return [CDVPluginResult resultWithStatus:status
                                  messageAsString:[value stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
     }
-    
+
     // Number
     if ([value isKindOfClass:[NSNumber class]]) {
         CFNumberType numberType = CFNumberGetType((CFNumberRef)value);
@@ -484,27 +484,27 @@ BOOL isLoggerEnabled = FALSE;
             return [CDVPluginResult resultWithStatus:status messageAsDouble:[value doubleValue]];
         }
     }
-    
+
     // Array
     if ([value isKindOfClass:[NSArray class]]) {
         return [CDVPluginResult resultWithStatus:status messageAsArray:value];
     }
-    
+
     // Object
     if ([value isKindOfClass:[NSDictionary class]]) {
         return [CDVPluginResult resultWithStatus:status messageAsDictionary:value];
     }
-    
+
     // Null
     if ([value isKindOfClass:[NSNull class]]) {
         return [CDVPluginResult resultWithStatus:status];
     }
-    
+
     // Nil
     if (!value) {
         return [CDVPluginResult resultWithStatus:status];
     }
-    
+
     NSLog(@"Cordova callback block returned unrecognized type: %@", NSStringFromClass([value class]));
     return [CDVPluginResult resultWithStatus:status];
 }
@@ -522,7 +522,7 @@ BOOL isLoggerEnabled = FALSE;
             CDVPluginResult *result = [self pluginResultForValue:value status:status];
             [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
         };
-        
+
         if (!block) {
             completionHandler(CDVCommandStatus_OK, nil);
         } else {

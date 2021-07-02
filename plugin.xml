@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" id="cordova-plugin-sightcall" version="4.0.3">
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" id="cordova-plugin-sightcall" version="4.0.4">
     <name>SightCall</name>
     <description>Cordova SightCall Plugin</description>
     <license>MIT</license>
@@ -42,7 +42,14 @@
         <source-file src="src/ios/AppDelegate+Sightcall.m" />
 
         <!--SightCall framework-->
-        <framework src="src/ios/Sightcall/LSUniversalSDK.framework" custom="true" embed="true" />
+        <podspec>
+            <config>
+                <source url="https://cdn.cocoapods.org/"/>
+            </config>
+            <pods use-frameworks="true">
+                <pod name="LSUniversalSDK" git="https://github.com/sightcall/iOS-UniversalSDK.git" tag="2.5.1"/>
+            </pods>
+        </podspec>
 
     </platform>
 

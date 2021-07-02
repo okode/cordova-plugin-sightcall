@@ -52,7 +52,7 @@ Cordova Plugin for SightCall.
 
 ## Troubleshooting guide
 
-Q: I get compilation errors on Android
+**Q: I get compilation errors on Android**
 
 A: First, check if your project compiles without this plugin. In that case, verify the plugin version you are using on your project because since 4.0 version we just support Cordova projects that are using Android with AndroidX. Below 4.0 version, take into account that this plugin is not compatible with AndroidX as it uses old Android Support Libraries. In that case, to migrate the plugin code to AndroidX, you can do the following:
 
@@ -60,11 +60,43 @@ A: First, check if your project compiles without this plugin. In that case, veri
 
 - Or using Jetifier if you are using this plugin on a Capacitor project: https://github.com/mikehardy/jetifier
 
-
-Q: I get Android compilation errors when linking resources in the manifest file like:
+**Q: I get Android compilation errors when linking resources in the manifest file like:**
 ```
 error: attribute android:requestLegacyExternalStorage not found.
 error: attribute android:foregroundServiceType not found.
 ```
 
 A: You need to compile against SDK 29 and maybe use the most recent build tools for aapt to know this attribute, because it's introduced in Android 10.
+
+**Q: Could not resolve all artifacts for configuration ':app:debugCompileClasspath'. Something like:**
+```
+Execution failed for task ':app:androidDependencies'.
+> Could not resolve all artifacts for configuration ':app:debugCompileClasspath'.
+   > Could not resolve androidx.lifecycle:lifecycle-runtime:2.1.0-beta01.
+     Required by:
+         project :app
+      > Cannot find a version of 'androidx.lifecycle:lifecycle-runtime' that satisfies the version constraints:
+           Dependency path 'android:app:unspecified' --> 'com.sightcall.universal:universal-sdk:4.3.20' --> 'com.google.android.material:material:1.3.0' --> 'androidx.lifecycle:lifecycle-runtime:2.0.0'
+    [...]
+```
+
+A: There's a collision between plugin dependencies. Try to check app dependencies tree.
+```
+gradlew -q dependencies app:dependencies --configuration debugCompileClasspath
+```
+You will need to force versions inside `build-extras.gradle`
+```
+ext.postBuildExtras = {
+    [...]
+    configurations.all {
+        resolutionStrategy {
+          forcedModules = [
+            'androidx.collection:collection:1.0.0',
+            'androidx.lifecycle:lifecycle-viewmodel:2.1.0',
+            'androidx.fragment:fragment:1.1.0'
+            [...]
+          ]
+        }
+    }
+}
+```
