@@ -3,9 +3,6 @@ buildscript {
         google()
         jcenter()
     }
-    dependencies {
-        classpath 'com.google.gms:google-services:4.3.3'
-    }
 }
 
 android {
@@ -25,18 +22,3 @@ repositories {
 dependencies {
     implementation 'com.sightcall.universal:universal-sdk:4.4.0'
 }
-
-cdvPluginPostBuildExtras.push({
-    afterEvaluate { // we use "AfterEvaluate" to postpone the execution after Urban Airship
-        def hasGoogleServicesPlugin = false
-        def plugins = getPlugins()
-        if (plugins != null) {
-            hasGoogleServicesPlugin = plugins.find { plugin ->
-                return plugin.toString().contains("com.google.gms.googleservices.GoogleServicesPlugin")
-            }
-        }
-        if (!hasGoogleServicesPlugin) {
-            apply plugin: 'com.google.gms.google-services'
-        }
-    }
-})
