@@ -23,7 +23,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.sightcall.universal:universal-sdk:4.9.0'
+    implementation 'com.sightcall.universal:universal-sdk:5.2.2'
 }
 
 cdvPluginPostBuildExtras.push({
