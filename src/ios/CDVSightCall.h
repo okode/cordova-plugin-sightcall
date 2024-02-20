@@ -1,10 +1,10 @@
 #import <Cordova/CDVPlugin.h>
 #if !(TARGET_OS_SIMULATOR)
 #import <UserNotifications/UserNotifications.h>
-#import <LSUniversalSDK/LSUniversalSDK.h>
+#import <VisualAssistance/LSUniversalSDK.h>
 #import "CallLocalNotification.h"
 
-@interface CDVSightCall : CDVPlugin<LSUniversalDelegate, LSPictureProtocol, UNUserNotificationCenterDelegate, LSUniversalLogDelegate>
+@interface CDVSightCall : CDVPlugin<LSUniversalDelegate, LSPictureProtocol, UNUserNotificationCenterDelegate>
 
 #if !(TARGET_OS_SIMULATOR)
 @property (strong, nonatomic) LSUniversal* lsUniversal;

@@ -56,7 +56,6 @@ BOOL isLoggerEnabled = FALSE;
     }
     self.lsUniversal.delegate = self;
     [self.lsUniversal setPictureDelegate: self];
-    self.lsUniversal.logDelegate = self;
 }
 
 - (void)registerListener:(CDVInvokedUrlCommand *)command {

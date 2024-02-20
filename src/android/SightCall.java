@@ -1,6 +1,6 @@
 package com.okode.cordova.sightcall;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -13,9 +13,10 @@ import com.sightcall.universal.agent.CreateCode;
 import com.sightcall.universal.agent.CreateCodeCallback;
 import com.sightcall.universal.agent.FetchUsecasesCallback;
 import com.sightcall.universal.agent.RegisterCallback;
-import com.sightcall.universal.agent.Registration;
 import com.sightcall.universal.agent.UniversalAgent;
 import com.sightcall.universal.agent.Usecase;
+import com.sightcall.universal.agent.registration.OldRegistration;
+import com.sightcall.universal.agent.registration.RegistrationRequest;
 import com.sightcall.universal.api.Environment;
 import com.sightcall.universal.event.CallReportEvent;
 import com.sightcall.universal.fcm.messages.GuestReady;
@@ -221,7 +222,7 @@ public class SightCall extends CordovaPlugin {
         getFirebaseToken(callback, new OnSuccessListener<InstanceIdResult>() {
             @Override
             public void onSuccess(final InstanceIdResult result) {
-                Registration registration = new Registration.Builder(SightCall.this.cordova.getActivity())
+              RegistrationRequest registration = new OldRegistration.Builder(SightCall.this.cordova.getActivity())
                         .temporaryToken(token)
                         .fcmToken(result.getToken())
                         .build();
@@ -235,7 +236,7 @@ public class SightCall extends CordovaPlugin {
                     public void onRegisterError(@NonNull Error error) {
                         callback.error("Agent registration failed");
                     }
-                });
+                }, true);
             }
         });
     }
