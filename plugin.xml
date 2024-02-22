@@ -10,8 +10,6 @@
     	<engine name="cordova" version=">=7.0.0" />
     </engines>
 
-    <preference name="UNIVERSAL_FEATURE_DEEPLINK_URI" default="@string/universal_feature_deeplink_uri"/>
-
     <js-module src="www/sightcall.js" name="sightcall">
     	<clobbers target="window.sightcall" />
     </js-module>
@@ -25,7 +23,7 @@
         </config-file>
         <preference name="MICROPHONE_USAGE_DESCRIPTION" default=" " />
         <config-file target="*-Info.plist" parent="NSMicrophoneUsageDescription">
-            <string>$MICROPHONE_USAGE_DESCRIPTION</string>
+            <string>$IOS_MICROPHONE_USAGE_DESCRIPTION</string>
         </config-file>
 
         <config-file target="config.xml" parent="/*">
@@ -61,6 +59,10 @@
             </feature>
         </config-file>
 
+        <preference name="ANDROID_FEATURE_FCM" default="false" />
+        <preference name="ANDROID_FEATURE_AGENT" default="false" />
+        <preference name="ANDROID_FEATURE_MEDIA_EXPORTS" default="false" />
+
         <config-file target="AndroidManifest.xml" parent="/*">
             <uses-permission android:name="android.permission.CAMERA" />
         </config-file>
@@ -72,13 +74,13 @@
         </config-file>
         <!--Sight Call-->
         <config-file parent="/resources" target="res/values/strings.xml">
-            <bool name="universal_feature_fcm">true</bool>
+            <bool name="universal_feature_fcm">$ANDROID_FEATURE_FCM</bool>
         </config-file>
         <config-file parent="/resources" target="res/values/strings.xml">
-            <bool name="universal_feature_agent">true</bool>
+            <bool name="universal_feature_agent">$ANDROID_FEATURE_AGENT</bool>
         </config-file>
         <config-file parent="/resources" target="res/values/strings.xml">
-            <bool name="universal_feature_media_export">false</bool>
+            <bool name="universal_feature_media_export">$ANDROID_FEATURE_MEDIA_EXPORTS</bool>
         </config-file>
 
         <!--End Sight Call-->
