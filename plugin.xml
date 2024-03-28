@@ -45,7 +45,7 @@
                 <source url="https://cdn.cocoapods.org/"/>
             </config>
             <pods use-frameworks="true">
-                <pod name="LSUniversalSDK" spec="5.1.0"/>
+                <pod name="LSUniversalSDK" spec="5.0.5"/>
             </pods>
         </podspec>
 
