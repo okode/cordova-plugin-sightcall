@@ -1,7 +1,7 @@
 #import <Cordova/CDVPlugin.h>
 #if !(TARGET_OS_SIMULATOR)
 #import <UserNotifications/UserNotifications.h>
-#import <VisualAssistance/LSUniversalSDK.h>
+#import <LSUniversalSDK/LSUniversalSDK.h>
 #import "CallLocalNotification.h"
 
 @interface CDVSightCall : CDVPlugin<LSUniversalDelegate, LSPictureProtocol, UNUserNotificationCenterDelegate>
