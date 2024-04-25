@@ -82,6 +82,7 @@ BOOL isLoggerEnabled = FALSE;
         case lsConnectionStatus_callActive:
         {
             dispatch_async(dispatch_get_main_queue(), ^{
+                self.lsUniversal.callViewController.modalPresentationStyle = UIModalPresentationFullScreen;
                 [self.viewController presentViewController:self.lsUniversal.callViewController animated:YES completion:nil];
             });
             statusData = ACTIVE_STATUS;
